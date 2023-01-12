@@ -1,0 +1,20 @@
+<div class="text-center py-4 px-4  bg-primary fixed-top">
+    <div class="text-white mb-3 mb-md-0">
+        <h1>Bem vindo ao sistema de relatorios online</h1>
+    </div>
+    <div class="btn-group dropup fixed mt-2" style="background: transparent" *ngIf="publicador.firstName">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+            style="background: transparent; border: none">
+            <img [src]="publicador.photoUrl" alt=" " width="32 " height="32 "
+                class="rounded-circle me-4" />
+            <strong>{{publicador.firstName}} {{publicador.lastName}}</strong>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="# ">Perfil</a></li>
+            <li>
+                <hr class="dropdown-divider" />
+            </li>
+            <li><a class="dropdown-item" (click)="singOutUser()">Sign out</a></li>
+        </ul>
+    </div>
+</div>

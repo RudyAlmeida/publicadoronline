@@ -1,0 +1,39 @@
+.dashboard{
+    margin-top: 8vw;
+}
+
+@media screen and (max-width: 1440px){
+    .dashboard{
+        margin-top: 12vw;
+    }
+}
+@media screen and (max-width: 1024px){
+    .dashboard{
+        margin-top: 15vw;
+    }
+}
+@media screen and (max-width: 768px){
+    .dashboard{
+        margin-top: 20vw;
+    }
+}
+@media screen and (max-width: 425px){
+    .dashboard{
+        margin-top: 45vw;
+    }
+}
+@media screen and (max-width: 390px){
+    .dashboard{
+        margin-top: 48vw;
+    }
+}
+@media screen and (max-width: 375px){
+    .dashboard{
+        margin-top: 50vw;
+    }
+}
+@media screen and (max-width: 320px){
+    .dashboard{
+        margin-top: 60vw;
+    }
+}
