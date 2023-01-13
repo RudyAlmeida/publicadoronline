@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -17,21 +17,27 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { CalendarModule, CalendarNativeDateFormatter, DateAdapter, DateFormatterParams } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 
-import { FlatpickrModule } from 'angularx-flatpickr';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { FlatpickrModule } from 'angularx-flatpickr';
+import { registerLocaleData } from '@angular/common';
+import localeBr from '@angular/common/locales/pt'
+import { ToastrModule } from 'ngx-toastr';
+import { RoundPipe } from './services/registries.service';
 
+registerLocaleData(localeBr, 'pt')
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboadComponent,
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    RoundPipe
   ],
   imports: [
     BrowserModule,
@@ -47,10 +53,11 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     }),
     NgbModule,
     FormsModule,
-    FlatpickrModule,
-    NgbModalModule
+    NgbModalModule,
+    ToastrModule.forRoot()
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'pt' },
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
@@ -72,3 +79,11 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+export class DemoModule extends CalendarNativeDateFormatter {
+  public override weekViewHour({ date, locale }: DateFormatterParams): string {
+    return new Intl.DateTimeFormat('pt-BR', {
+      hour: 'numeric',
+      minute: 'numeric',
+    }).format(date);
+  }
+}

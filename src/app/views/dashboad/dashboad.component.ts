@@ -1,29 +1,15 @@
 import { SocialAuthService } from '@abacritt/angularx-social-login';
-import { Component, Input, OnInit } from '@angular/core';
-import { CalendarEvent } from 'angular-calendar';
-import {
-  ChangeDetectionStrategy,
-  ViewChild,
-  TemplateRef,
-} from '@angular/core';
-import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addHours,
-} from 'date-fns';
+import { Component, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { CalendarEvent, CalendarDateFormatter, DAYS_OF_WEEK, } from 'angular-calendar';
+import { ChangeDetectionStrategy, ViewChild, TemplateRef } from '@angular/core';
+import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, setHours, setMinutes } from 'date-fns';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarView,
-} from 'angular-calendar';
+import { CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
+import { CustomDateFormatter } from '../../custom-date-formatter.provider';
+import { ToastrService } from 'ngx-toastr';
+import { RegistriesService } from 'src/app/services/registries.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -55,23 +41,39 @@ const colors: Record<string, EventColor> = {
       }
     `,
   ],
+  providers: [
+    {
+      provide: CalendarDateFormatter,
+      useClass: CustomDateFormatter,
+    },
+  ],
   templateUrl: './dashboad.component.html',
   styleUrls: ['./dashboad.component.scss']
 })
-export class DashboadComponent implements OnInit {
+export class DashboadComponent implements OnInit, OnChanges {
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   publicador: any = []
 
-  view: CalendarView = CalendarView.Month;
+  locale: string = 'pt';
+
+  saveButton: boolean = true
+  view: CalendarView = CalendarView.Day;
 
   CalendarView = CalendarView;
 
   viewDate: Date = new Date();
 
   modalData!: {
-    action: string;
-    event: CalendarEvent;
+    oficialDay?: Date
+    startHour?: string;
+    startMinute?: string;
+    endHour?: string;
+    endMinute?: string;
+    magazines?: number;
+    books?: number;
+    revisits?: number;
+    studies?: number
   };
 
   actions: CalendarEventAction[] = [
@@ -94,54 +96,52 @@ export class DashboadComponent implements OnInit {
 
   refresh = new Subject<void>();
 
-  events: CalendarEvent[] = [
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: { ...colors['red'] },
-      actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: { ...colors['yellow'] },
-      actions: this.actions,
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: { ...colors["blue"] },
-      allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: { ...colors["yellow"] },
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-  ];
+  events: CalendarEvent[] = [];
+  totals: any = {
+    email: '',
+    hours: 0,
+    magazines: 0,
+    books: 0,
+    revisits: 0,
+    studies: 0
+  };
+  minutes: number = 0
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private authService: SocialAuthService, private modal: NgbModal) { }
+  constructor(private authService: SocialAuthService, private modal: NgbModal, private toastr: ToastrService, private service: RegistriesService) { }
 
   ngOnInit(): void {
     let user = localStorage.getItem('publicador')
     this.publicador = user ? JSON.parse(user) : []
+    this.totals.email = this.publicador.email;
+    this.getTotals()
+    this.getEvents()
+    
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["events"]) {
+      this.events = [...this.events]
+    }
+  }
+  getTotals(){
+    let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`
+    this.service.getTotals(totalCollectionName, this.publicador.email).then((result: any) => {this.totals = result.length == 0 ? this.totals : result[0]})
+  }
+  getEvents() {
+    this.events = [];
+    let collectionName: string = this.viewDate.getMonth().toString() + this.viewDate.getFullYear().toString()
+    let day = this.viewDate.getDate()
+    this.service.getRegistriesFromDayByPublisher(collectionName, this.publicador.email, day).then((result: any) => {
+      result.forEach((element: any) => {
+        element.start = new Date(element.start)
+        element.end = new Date(element.end)
+        this.events.push(element)
+      })
+    }).finally(() => {
+        this.refresh.next()
+    })
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -177,7 +177,7 @@ export class DashboadComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
+    //this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
   }
 
@@ -189,11 +189,9 @@ export class DashboadComponent implements OnInit {
         start: startOfDay(new Date()),
         end: endOfDay(new Date()),
         color: colors["red"],
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
+        meta: {
+          ...this.modalData
+        }
       },
     ];
   }
@@ -209,4 +207,69 @@ export class DashboadComponent implements OnInit {
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
+  hourSegmentClicked() {
+    this.modalData = {
+      oficialDay: this.viewDate,
+      startHour: "00",
+      startMinute: "00",
+      endHour: "00",
+      endMinute: "00",
+      magazines: 0,
+      books: 0,
+      revisits: 0,
+      studies: 0
+    }
+
+    this.modal.open(this.modalContent, { size: 'lg' });
+  }
+  saveRegistry() {
+    let hour: number = 0;
+    if(this.modalData.endHour && this.modalData.startHour  && this.modalData.endMinute && this.modalData.startMinute){
+      hour = ((Number(this.modalData.endHour) * 60) + Number(this.modalData.endMinute)) - ((Number(this.modalData.startHour) * 60) + Number(this.modalData.startMinute));
+    }
+    let event: CalendarEvent = {
+      start: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.startMinute)), Number(this.modalData.startHour)),
+      end: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.endMinute)), Number(this.modalData.endHour)),
+      title: `Horas: ${Math.floor(hour/60)}, Minutos: ${hour%60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}, Estudos: ${this.modalData.studies},`,
+      color: { ...colors['yellow'] },
+      meta: {
+        day: this.viewDate.getDate(),
+        publisher: this.publicador.email,
+        ...this.modalData
+      }
+    }
+    this.events = [
+      ...this.events,
+      event
+    ]
+
+    let collectionName: string = this.viewDate.getMonth().toString() + this.viewDate.getFullYear().toString();
+
+    let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
+    this.service.addRegistry(event, collectionName);
+    this.totals.hours += (hour);
+    this.totals.magazines += this.modalData.magazines;
+    this.totals.books += this.modalData.books;
+    this.totals.revisits += this.modalData.revisits;
+    this.totals.studies += this.modalData.studies;
+    this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
+      this.getTotals();
+    });
+    this.modal.dismissAll();
+  }
+
+  checkHour() {
+    if (this.modalData.endHour != undefined && this.modalData.startHour != undefined) {
+      if (this.modalData.endHour < this.modalData.startHour) {
+        this.toastr.error('Hora de encerramento não pode ser menor que a de inicio.', 'ERRO', {
+          timeOut: 5000,
+        });
+      } else {
+        this.saveButton = false;
+      }
+    }
+  }
+
 }
+
+

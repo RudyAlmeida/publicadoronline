@@ -5,6 +5,7 @@ import { DashboadComponent } from './views/dashboad/dashboad.component';
 import { LoginComponent } from './views/login/login.component';
 
 const routes: Routes = [
+  {path:'', redirectTo:'/relatorio', pathMatch:'full'},
   { path: 'login', component: LoginComponent },
   { path: 'relatorio', component: DashboadComponent, canActivate: [LoginGuard] },
 

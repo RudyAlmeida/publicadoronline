@@ -28,6 +28,8 @@
     "bootstrap": "^5.2.0",
     "date-fns": "^2.29.3",
     "firebase": "^9.15.0",
+    "flatpickr": "^4.6.13",
+    "ngx-toastr": "^14.3.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
