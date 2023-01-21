@@ -4,3 +4,19 @@
 .bg-primary{
     background-color: #2B3BA8 !important;
 }
+
+@media screen and (max-width: 1440px) {
+    .logo {
+        width: 10vw;
+    }
+}
+@media screen and (max-width: 1024px) {
+    .logo {
+        width: 13vw;
+    }
+}
+@media screen and (max-width: 425px) {
+    .logo {
+        width: 20vw;
+    }
+}

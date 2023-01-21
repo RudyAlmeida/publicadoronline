@@ -27,7 +27,7 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { registerLocaleData } from '@angular/common';
 import localeBr from '@angular/common/locales/pt'
 import { ToastrModule } from 'ngx-toastr';
-import { RoundPipe } from './services/registries.service';
+import { RoundPipe, MinutesToHours } from './services/registries.service';
 
 registerLocaleData(localeBr, 'pt')
 @NgModule({
@@ -37,7 +37,8 @@ registerLocaleData(localeBr, 'pt')
     DashboadComponent,
     FooterComponent,
     HeaderComponent,
-    RoundPipe
+    RoundPipe,
+    MinutesToHours
   ],
   imports: [
     BrowserModule,

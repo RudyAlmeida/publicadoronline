@@ -1,39 +1,72 @@
-.dashboard{
+.dashboard {
     margin-top: 10vw;
 }
 
-@media screen and (max-width: 1440px){
-    .dashboard{
-        margin-top: 12vw;
-    }
+.removeArrows::-webkit-inner-spin-button, .no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
 }
-@media screen and (max-width: 1024px){
-    .dashboard{
+
+.removeArrows {
+    -moz-appearance:textfield !important;
+    appearance: textfield !important;
+}
+.imgList{
+    width: 5vw;
+}
+
+@media screen and (max-width: 1440px) {
+    .dashboard {
         margin-top: 15vw;
     }
 }
-@media screen and (max-width: 768px){
-    .dashboard{
+@media screen and (max-width: 1280px) {
+    .dashboard {
+        margin-top: 17vw;
+    }
+}
+@media screen and (max-width: 1024px) {
+    .dashboard {
         margin-top: 20vw;
     }
 }
-@media screen and (max-width: 425px){
-    .dashboard{
+@media screen and (max-width: 820px) {
+    .dashboard {
+        margin-top: 25vw;
+    }
+}
+@media screen and (max-width: 540px) {
+    .dashboard {
+        margin-top: 30vw;
+    }
+}
+
+
+@media screen and (max-width: 425px) {
+    .dashboard {
         margin-top: 45vw;
     }
 }
-@media screen and (max-width: 390px){
-    .dashboard{
+
+@media screen and (max-width: 390px) {
+    .dashboard {
         margin-top: 48vw;
     }
 }
-@media screen and (max-width: 375px){
-    .dashboard{
+
+@media screen and (max-width: 375px) {
+    .dashboard {
         margin-top: 50vw;
     }
 }
-@media screen and (max-width: 320px){
-    .dashboard{
+
+@media screen and (max-width: 320px) {
+    .dashboard {
         margin-top: 60vw;
+    }
+}
+@media screen and (max-width: 280px) {
+    .dashboard {
+        margin-top: 75vw;
     }
 }
