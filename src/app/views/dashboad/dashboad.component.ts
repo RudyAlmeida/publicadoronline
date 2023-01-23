@@ -388,7 +388,7 @@ export class DashboadComponent implements OnInit, OnChanges {
       neighborhood: "",
       reference: "",
       publication: "",
-      isActiveStudy: "",
+      isActiveStudy: "false",
       comments: []
     }
     this.comment = ''
