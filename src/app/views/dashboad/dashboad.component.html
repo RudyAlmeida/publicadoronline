@@ -233,10 +233,6 @@
         Revisitas:
         <input type="number" class="form-control" [(ngModel)]="modalData.revisits" name="revisits">
       </div>
-      <!-- <div>
-        Estudos:
-        <input type="number" class="form-control" [(ngModel)]="modalData.studies" name="studies">
-      </div> -->
       <div>
         <button type="button" [disabled]="saveButton" class="btn btn-primary mt-2 me-2" (click)="saveRegistry()">
           Salvar
@@ -247,8 +243,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="close()">
-        OK
+      <button type="button" class="btn btn-primary" (click)="close()">
+        Fechar
       </button>
     </div>
   </ng-template>
@@ -363,8 +359,6 @@
         <label for="inputFile">
           <img src="assets/img/cloud_upload.png" /></label>
         <input id="inputFile" class="mt-3 ms-5 d-none" type="file" (change)="uploadFile($event)" />
-        <!-- <div class="mt-3">{{ uploadPercent | async }}</div> -->
-        <!-- <a [href]="downloadURL | async">{{ downloadURL | async }}</a> -->
       </div>
       <span *ngIf="spinner">Fazendo uppload da sua imagem</span>
       <br>
@@ -376,7 +370,9 @@
       </div>
     </div>
     <div class="modal-footer">
-
+      <button type="button" class="btn btn-primary" (click)="close()">
+        Fechar
+      </button>
     </div>
   </ng-template>
   <ng-template #modalListRevisits let-close="close">
@@ -393,11 +389,11 @@
       </label>
       <input class="form-check-input" type="radio" (click)="filterStudentes('false')" name="flexRadioDefault">
       <label class="form-check-label mx-1">
-        Apenas Estudantes ativos
+        Apenas Revisitas
       </label>
       <input class="form-check-input" type="radio" (click)="filterStudentes('all')" name="flexRadioDefault">
       <label class="form-check-label mx-1">
-        Apenas Estudantes ativos
+        Todos
       </label>
       <div class="mt-2">
         <table class="table">
@@ -446,6 +442,9 @@
     </div>
     <div class="modal-body">
       <div class="row">
+        <span>
+          Dia da primeira visita:
+        </span>
         <div class="col-4"><input type="text" class="form-control" [(ngModel)]="editingRevist.firstVisitDay"
             name="revistName"></div>
         <div class="col-4"><select name="firstVisitMonth" class="form-select" id="firstVisitMonth"
@@ -505,26 +504,29 @@
         Publicação / texto bíblico usado:
         <input type="text" class="form-control" [(ngModel)]="editingRevist.publication" name="publication">
       </div>
-      <input class="form-check-input" type="radio" [(ngModel)]="editingRevist.isActiveStudy" value="true"
-        name="flexRadioDefault">
-      <label class="form-check-label mx-1">
-        Sim
-      </label>
-      <input class="form-check-input" type="radio" [(ngModel)]="editingRevist.isActiveStudy" value="false"
-        name="flexRadioDefault">
-      <label class="form-check-label mx-1">
-        Não
-      </label>
+      <div class="mt-3">
+        <span>
+          Estudante ativo:
+        </span>
+        <input class="form-check-input" type="radio" [(ngModel)]="editingRevist.isActiveStudy"
+          (click)="updateStudies('true')" value="true" name="flexRadioDefault">
+        <label class="form-check-label mx-1">
+          Sim
+        </label>
+        <input class="form-check-input" type="radio" [(ngModel)]="editingRevist.isActiveStudy"
+          (click)="updateStudies('false')" value="false" name="flexRadioDefault">
+        <label class="form-check-label mx-1">
+          Não
+        </label>
+      </div>
       <div class="my-5 justify-content-center">
         <p>Adicione uma imagem / foto (se o registro já continha uma imagem, a anterior será substituida)</p>
         <label for="inputFile">
           <img src="assets/img/cloud_upload.png" /></label>
         <input id="inputFile" class="mt-3 ms-5 d-none" type="file" (change)="uploadFileEdit($event)" />
-        <!-- <div class="mt-3">{{ uploadPercent | async }}</div> -->
-        <!-- <a [href]="downloadURL | async">{{ downloadURL | async }}</a> -->
       </div>
       <div *ngIf="editingRevist.imagem">
-        <img [src]="editingRevist.imagem" alt="" class="imgList">
+        <img [src]="editingRevist.imagem" alt="" class="imgList" (click)="showImage()">
       </div>
       <span *ngIf="spinnerEdit">Fazendo uppload da sua imagem</span>
       <br>
@@ -537,19 +539,75 @@
       <p class="mt-2">
         Anotações:
       </p>
-      <div *ngFor="let comment of editingRevist.comments" class="border mt-2 p-2">
-        <p>
-          Dia: {{comment.day}} / {{meses[comment.month]}}
-        </p>
-        <p>
-          {{comment.comment}}
-        </p>
+      <div *ngIf="!isEdittingComment; else editCommentForm">
+        <div *ngFor="let comment of editingRevist.comments; index as index" class="border d-flex row mt-2 p-2">
+          <div class="col-11">
+            <p>
+              Dia: {{comment.day}} / {{meses[comment.month]}}
+            </p>
+          </div>
+          <div class="col-1 justify-content-end">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-pencil-square"
+              viewBox="0 0 16 16" (click)="editComment(comment, index)">
+              <path
+                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+              <path fill-rule="evenodd"
+                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+            </svg>
+          </div>
+          <p>
+            {{comment.comment}}
+          </p>
+        </div>
+        <div>
+          Nova anotação / comentário:
+          <textarea class="form-control" [(ngModel)]="comment" name="comment"></textarea>
+        </div>
+        <button class="btn btn-primary mt-2" (click)="newComment()">Adicionar</button>
       </div>
-      <div>
-        Nova anotação / comentário:
-        <textarea class="form-control" [(ngModel)]="comment" name="comment"></textarea>
-      </div>
-      <button class="btn btn-primary mt-2" (click)="newComment()">Adicionar</button>
+      <ng-template #editCommentForm>
+        <div class="row">
+          <div class="col-6"><input type="text" class="form-control" [(ngModel)]="edittingComment.day"
+              name="revistName"></div>
+          <div class="col-6"><select name="firstVisitMonth" class="form-select" id="firstVisitMonth"
+              [(ngModel)]="edittingComment.month">
+              <option value="0">Janeiro</option>
+              <option value="1">Fevereiro</option>
+              <option value="2">Março</option>
+              <option value="3">Abril</option>
+              <option value="4">Maio</option>
+              <option value="5">Junho</option>
+              <option value="6">Julho</option>
+              <option value="7">Agosto</option>
+              <option value="8">Setembro</option>
+              <option value="9">Outubro</option>
+              <option value="10">Novembro</option>
+              <option value="11">Dezembro</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          Nova anotação / comentário:
+          <textarea class="form-control" [(ngModel)]="edittingComment.comment" name="comment"></textarea>
+        </div>
+        <button class="btn btn-primary mt-2" (click)="saveEditedComment()">Editar comentário</button>
+      </ng-template>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="close()">
+        Fechar
+      </button>
+    </div>
+  </ng-template>
+  <ng-template #modalImagem let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title"></h5>
+      <button type="button" class="btn btn-primary close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <img [src]="editingRevist.imagem" alt="" class="imgShow" (click)="showImage()">
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" (click)="close()">

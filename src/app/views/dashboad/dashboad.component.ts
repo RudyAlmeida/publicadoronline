@@ -60,12 +60,13 @@ export class DashboadComponent implements OnInit, OnChanges {
   @ViewChild('modalNewRevisit', { static: true }) modalNewRevisit!: TemplateRef<any>;
   @ViewChild('modalListRevisits', { static: true }) modalListRevisits!: TemplateRef<any>;
   @ViewChild('modalEditRevisit', { static: true }) modalEditRevisit!: TemplateRef<any>;
+  @ViewChild('modalImagem', { static: true }) modalImagem!: TemplateRef<any>;
 
   publicador: any = []
 
   locale: string = 'pt';
 
-  saveButton: boolean = true
+  saveButton: boolean = true;
   view: CalendarView = CalendarView.Day;
 
   CalendarView = CalendarView;
@@ -101,11 +102,14 @@ export class DashboadComponent implements OnInit, OnChanges {
     publication?: String,
     isActiveStudy?: String,
     comments?: any[]
-  }
-  editingRevist!: any
-  comment!: String
-  allRevists: any = []
-  myRevisits: any = []
+  };
+  editingRevist!: any;
+  comment!: String;
+  edittingComment!: any;
+  isEdittingComment: boolean = false;
+  edittingId: number = 0;
+  allRevists: any = [];
+  myRevisits: any = [];
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -133,13 +137,13 @@ export class DashboadComponent implements OnInit, OnChanges {
     magazines: 0,
     books: 0,
     revisits: 0,
-    //studies: 0
+    studies: 0
   };
-  minutes: number = 0
+  minutes: number = 0;
 
   activeDayIsOpen: boolean = true;
-  deleteButton: boolean = false
-  sendRegistryButton: boolean = false
+  deleteButton: boolean = false;
+  sendRegistryButton: boolean = false;
 
   editingEvent: CalendarEvent = {
     start: this.viewDate,
@@ -153,16 +157,15 @@ export class DashboadComponent implements OnInit, OnChanges {
   today: number = new Date().getDate()
   minutesArray: any [] = []
   meses: String[] = [  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']; 
-  diasDaSemana: String[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
-  spinner: boolean = false
-  spinnerEdit: boolean = false
+  diasDaSemana: String[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+  spinner: boolean = false;
+  spinnerEdit: boolean = false;
 
   constructor(private authService: SocialAuthService, private modal: NgbModal, private toastr: ToastrService, private service: RegistriesService, private fileService: FileService ) { }
 
   ngOnInit(): void {
     let user = localStorage.getItem('publicador')
     this.publicador = user ? JSON.parse(user) : []
-    console.log(this.publicador)
     this.publicador.perfil == undefined ? this.publicador.perfil = 'publicador' : this.publicador.perfil;
     this.totals.email = this.publicador.email;
     this.getTotals()
@@ -246,21 +249,6 @@ export class DashboadComponent implements OnInit, OnChanges {
     this.modal.open(this.modalContent, { size: 'lg' });
   }
 
-  addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors["red"],
-        meta: {
-          ...this.modalData
-        }
-      },
-    ];
-  }
-
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event.id !== eventToDelete.id);
   }
@@ -306,7 +294,6 @@ export class DashboadComponent implements OnInit, OnChanges {
       magazines: 0,
       books: 0,
       revisits: 0,
-      //studies: 0
     }
     if (this.editingEvent != undefined) {
       this.editingEvent.id = ""
@@ -342,7 +329,6 @@ export class DashboadComponent implements OnInit, OnChanges {
       this.totals.magazines += this.modalData.magazines;
       this.totals.books += this.modalData.books;
       this.totals.revisits += this.modalData.revisits;
-      //this.totals.studies += this.modalData.studies;
     } else {
       let editingHour: number = 0;
       if (this.editingEvent.meta.endHour && this.editingEvent.meta.startHour && this.editingEvent.meta.endMinute && this.editingEvent.meta.startMinute) {
@@ -354,14 +340,12 @@ export class DashboadComponent implements OnInit, OnChanges {
       this.editingEvent.meta.magazines <= (this.modalData.magazines as number) ? this.totals.magazines += (this.modalData.magazines as number - this.editingEvent.meta.magazines) : this.totals.magazines -= (this.editingEvent.meta.magazines - (this.modalData.magazines as number))
       this.editingEvent.meta.books <= (this.modalData.books as number) ? this.totals.books += (this.modalData.books as number - this.editingEvent.meta.books) : this.totals.books -= (this.editingEvent.meta.books - (this.modalData.books as number));
       this.editingEvent.meta.revisits <= (this.modalData.revisits as number) ? this.totals.revisits += (this.modalData.revisits as number - this.editingEvent.meta.revisits) : this.totals.revisits -= (this.editingEvent.meta.revisits - (this.modalData.revisits as number))
-      //this.editingEvent.meta.studies <= (this.modalData.studies as number) ? this.totals.studies += (this.modalData.studies as number - this.editingEvent.meta.studies) : this.totals.studies -= (this.editingEvent.meta.studies - (this.modalData.studies as number))
       this.service.editRegistry(event, collectionName)
     }
     this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
       this.getTotals();
     });
     this.getEvents();
-
     this.modal.dismissAll();
   }
 
@@ -416,8 +400,16 @@ export class DashboadComponent implements OnInit, OnChanges {
   }
   openListRevisitModal(){
     this.modal.open(this.modalListRevisits, { size: 'lg' });
-    this.service.getRevisits(this.publicador.email).then(result => {this.allRevists = result, this.myRevisits = [...this.allRevists]} )
-    
+    this.service.getRevisits(this.publicador.email).then(result => {this.allRevists = result, this.myRevisits = [...this.allRevists]} ).then(()=>{
+      let studies = this.allRevists.filter((student : any) => student.isActiveStudy ==="true" );
+      if(studies.length != this.totals.studies){
+        this.totals.studies = studies.length;
+        let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
+        this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
+          this.getTotals();
+        });
+      }
+    })
   }
   filterStudentes(type: String){
     this.myRevisits = type == "true" ? this.allRevists.filter((student : any) => student.isActiveStudy ==="true" ) :  type == "false" ? this.allRevists.filter((student : any) => student.isActiveStudy ==="false" ) : [...this.allRevists]
@@ -438,12 +430,10 @@ export class DashboadComponent implements OnInit, OnChanges {
   uploadFile(event: any) {
     this.spinner = true;
     const file = event.target.files[0];
-
     let reader = new FileReader()
     let nome = "imagem"
     reader.readAsDataURL(file)
     reader.onloadend = () =>{
-      console.log(reader.result)
       this.fileService.uploadFile(`${this.publicador.firstName + this.publicador.lastName}`, nome+Date.now(), reader.result).then(
         (urlImagem: any) =>{
           this.newRevisit.imagem = urlImagem
@@ -455,12 +445,10 @@ export class DashboadComponent implements OnInit, OnChanges {
   uploadFileEdit(event: any) {
     this.spinnerEdit = true;
     const file = event.target.files[0];
-
     let reader = new FileReader()
     let nome = "imagem"
     reader.readAsDataURL(file)
     reader.onloadend = () =>{
-      console.log(reader.result)
       this.fileService.uploadFile(`${this.publicador.firstName + this.publicador.lastName}`, nome+Date.now(), reader.result).then(
         (urlImagem: any) =>{
           this.editingRevist.imagem = urlImagem
@@ -468,6 +456,28 @@ export class DashboadComponent implements OnInit, OnChanges {
         }
       )
     }
+  }
+  updateStudies(isActive: String){
+    isActive == "true" ? this.totals.studies++ : this.totals.studies--;
+    let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
+    this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
+      this.getTotals();
+      this.service.editRevist(this.editingRevist);
+    });
+  }
+  editComment(comment : any, id: number){
+    this.edittingComment = comment;
+    this.edittingId = id;
+    this.isEdittingComment = true
+  }
+  saveEditedComment(){
+    this.editingRevist.comments[this.edittingId] = this.edittingComment;
+    this.service.editRevist(this.editingRevist).then(()=>{
+      this.isEdittingComment = false;
+    })
+  }
+  showImage(){
+    this.modal.open(this.modalImagem, { size: 'lg' });
   }
 }
 

@@ -1,3 +1,7 @@
+.btn-primary{
+  background-color: #2B3BA8;
+  border-color: #2B3BA8;
+}
 .dashboard {
     margin-top: 10vw;
 }
@@ -14,30 +18,47 @@
 .imgList{
     width: 5vw;
 }
-
+.imgShow{
+    width: 100%;
+}
 @media screen and (max-width: 1440px) {
     .dashboard {
         margin-top: 15vw;
+    }
+    .imgList{
+        width: 10vw;
     }
 }
 @media screen and (max-width: 1280px) {
     .dashboard {
         margin-top: 17vw;
     }
+    .imgList{
+        width: 12vw;
+    }
 }
 @media screen and (max-width: 1024px) {
     .dashboard {
         margin-top: 20vw;
+    }
+    .imgList{
+        width: 15vw;
     }
 }
 @media screen and (max-width: 820px) {
     .dashboard {
         margin-top: 25vw;
     }
+    .imgList{
+        width: 20vw;
+    }
 }
 @media screen and (max-width: 540px) {
     .dashboard {
         margin-top: 30vw;
+    }
+    .imgList{
+        width: 25vw;
     }
 }
 
@@ -46,11 +67,17 @@
     .dashboard {
         margin-top: 45vw;
     }
+    .imgList{
+        width: 35vw;
+    }
 }
 
 @media screen and (max-width: 390px) {
     .dashboard {
         margin-top: 48vw;
+    }
+    .imgList{
+        width: 38vw;
     }
 }
 
@@ -58,15 +85,24 @@
     .dashboard {
         margin-top: 50vw;
     }
+    .imgList{
+        width: 40vw;
+    }
 }
 
 @media screen and (max-width: 320px) {
     .dashboard {
         margin-top: 60vw;
     }
+    .imgList{
+        width: 50vw;
+    }
 }
 @media screen and (max-width: 280px) {
     .dashboard {
         margin-top: 75vw;
+    }
+    .imgList{
+        width: 65vw;
     }
 }
