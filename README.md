@@ -1,27 +1,38 @@
 # Publicadoronline
+<h1 align="center">Publicador Online</h1>
+<h3 align="center">Sistema para gerenciamento de horas de publicadores e pioneiros das Testemunhas de Jeová.</h3>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
 
-## Development server
+<p align="center"><a href="https://publicadoronline.com.br/" >Finalizado 🚀 (Será atualizado de acordo com a necessidade)</a><p>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+![banner](https://github.com/RudyAlmeida/publicadoronline/blob/main/src/assets/img/login-screen.png?raw=true)
 
-## Code scaffolding
+![banner](https://github.com/RudyAlmeida/publicadoronline/blob/main/src/assets/img/main-screen.png?raw=true)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Publicadoronline
+Projeto pessoal desenvolvido para uso proprio e de irmãos.
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Proposta 💡
 
-## Running unit tests
+Sistema online que possa ser acessado de qualquer dispositivo, seja movel ou desktops e notebooks, para que os publicadores possam fazer o controle de suas horas e revisitas. Aplicação não conta com backend devido a conexão Angular - Firebase.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Techs 🛠
+ - ANGULAR
+ - HTML5
+ - CSS
+ - TYPESCRIPT
+ - BOOTSTRAP
+ - GOOGLE LOGIN
+ - FIREBASE AUTHENTICATOR
+ - FIREBASE REALTIME DATABASE
 
-## Running end-to-end tests
+---
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Authors 👨‍💻
 
-## Further help
+- GitHub: [@Rodolpho](https://github.com/RudyAlmeida)
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Copyright - 2023 Rodolpho 
