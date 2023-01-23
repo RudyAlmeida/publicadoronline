@@ -10,7 +10,8 @@ export class LoginService {
   constructor(private authService: SocialAuthService, private router: Router) { }
 
   login(){
-    this.authService.authState.subscribe((user) => {
+    this.authService.authState.subscribe((user : any) => {
+      user.showVideo = "true"
       localStorage.setItem('publicador', JSON.stringify(user));
       this.router.navigate(['/relatorio']);
     })

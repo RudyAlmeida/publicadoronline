@@ -61,6 +61,7 @@ export class DashboadComponent implements OnInit, OnChanges {
   @ViewChild('modalListRevisits', { static: true }) modalListRevisits!: TemplateRef<any>;
   @ViewChild('modalEditRevisit', { static: true }) modalEditRevisit!: TemplateRef<any>;
   @ViewChild('modalImagem', { static: true }) modalImagem!: TemplateRef<any>;
+  @ViewChild('modalVideo', { static: true }) modalVideo!: TemplateRef<any>;
 
   publicador: any = []
 
@@ -161,6 +162,18 @@ export class DashboadComponent implements OnInit, OnChanges {
   spinner: boolean = false;
   spinnerEdit: boolean = false;
 
+
+  videoItems = [
+    {
+      name: 'Video one',
+      src: 'https://firebasestorage.googleapis.com/v0/b/publicador-online.appspot.com/o/video-aparesenta%C3%A7%C3%A3o%2Funknown_2023.01.22-23.55.mp4?alt=media&token=08cd4cb4-686e-41c7-a0d7-edca3a91bcef',
+      type: 'video/mp4'
+    }
+  ];
+  activeIndex = 0;
+  currentVideo = this.videoItems[this.activeIndex];
+  data: any;
+
   constructor(private authService: SocialAuthService, private modal: NgbModal, private toastr: ToastrService, private service: RegistriesService, private fileService: FileService ) { }
 
   ngOnInit(): void {
@@ -173,6 +186,9 @@ export class DashboadComponent implements OnInit, OnChanges {
     for(let i = 0; i <= 59; i++){
       let minute = {'value' : i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}), 'title' : i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}
       this.minutesArray.push(minute)
+    }
+    if(this.publicador.showVideo == "true"){
+      this.modal.open(this.modalVideo, { size: 'lg' });
     }
   }
 
@@ -478,6 +494,32 @@ export class DashboadComponent implements OnInit, OnChanges {
   }
   showImage(){
     this.modal.open(this.modalImagem, { size: 'lg' });
+  }
+  videoPlayerInit(data: any) {
+    this.data = data;
+    this.data.getDefaultMedia().subscriptions.loadedMetadata.subscribe(this.initVdo.bind(this));
+    this.data.getDefaultMedia().subscriptions.ended.subscribe(this.nextVideo.bind(this));
+  }
+  nextVideo() {
+    this.activeIndex++;
+    if (this.activeIndex === this.videoItems.length) {
+      this.activeIndex = 0;
+    }
+    this.currentVideo = this.videoItems[this.activeIndex];
+  }
+  initVdo() {
+    this.data.play();
+  }
+  startPlaylistVdo(item: any, index: number) {
+    this.activeIndex = index;
+    this.currentVideo = item;
+  }
+  cancelVideo(action: String){
+    action == "true" ? this.publicador.showVideo = "true" : this.publicador.showVideo = "false";
+    localStorage.setItem('publicador', JSON.stringify(this.publicador))
+  }
+  showVideo(){
+    this.modal.open(this.modalVideo, { size: 'lg' });
   }
 }
 

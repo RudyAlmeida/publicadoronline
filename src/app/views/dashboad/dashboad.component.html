@@ -140,7 +140,10 @@
     </div>
   </ng-template>
 
-  <br /><br /><br />
+  <div class="my-3">
+    <p class="text-center text-primary text-decoration-underline" (click)="showVideo()">Ver o video novamente</p>
+  </div>
+
 
   <ng-template #modalContent let-close="close">
     <div class="modal-header">
@@ -621,6 +624,67 @@
       <img [src]="editingRevist.imagem" alt="" class="imgShow" (click)="showImage()">
     </div>
     <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="close()">
+        Fechar
+      </button>
+    </div>
+  </ng-template>
+  <ng-template #modalVideo let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title"></h5>
+      <button type="button" class="btn btn-primary close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <vg-player (onPlayerReady)="videoPlayerInit($event)" #singleVideo>
+        <vg-overlay-play></vg-overlay-play>
+        <vg-buffering></vg-buffering>
+        <vg-scrub-bar>
+          <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+          <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+        </vg-scrub-bar>
+        <vg-controls>
+          <vg-play-pause></vg-play-pause>
+          <vg-playback-button></vg-playback-button>
+          <vg-time-display
+            vgProperty="current"
+            vgFormat="mm:ss"
+          ></vg-time-display>
+          <vg-time-display
+            vgProperty="total"
+            vgFormat="mm:ss"
+          ></vg-time-display>
+          <vg-mute></vg-mute>
+          <vg-volume></vg-volume>
+          <vg-fullscreen></vg-fullscreen>
+        </vg-controls>
+        <video
+          #media
+          [vgMedia]="$any(media)"
+          [src]="currentVideo.src"
+          id="singleVideo"
+          preload="auto"
+          crossorigin
+        ></video>
+      </vg-player>
+      <span>
+        Mostrar video nas proximas visitas:
+      </span>
+      <br>
+      <input class="form-check-input" type="radio" [(ngModel)]="publicador.showVideo"
+        (click)="cancelVideo('true')" value="true" name="flexRadioDefault">
+      <label class="form-check-label mx-1">
+        Sim
+      </label>
+      <input class="form-check-input" type="radio" [(ngModel)]="publicador.showVideo"
+        (click)="cancelVideo('false')" value="false" name="flexRadioDefault">
+      <label class="form-check-label mx-1">
+        Não
+      </label>
+    </div>
+    <div class="modal-footer">
+     
       <button type="button" class="btn btn-primary" (click)="close()">
         Fechar
       </button>

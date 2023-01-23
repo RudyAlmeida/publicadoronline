@@ -23,11 +23,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
-import { FlatpickrModule } from 'angularx-flatpickr';
 import { registerLocaleData } from '@angular/common';
 import localeBr from '@angular/common/locales/pt'
 import { ToastrModule } from 'ngx-toastr';
 import { RoundPipe, MinutesToHours } from './services/registries.service';
+
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
+import { VgControlsModule } from '@videogular/ngx-videogular/controls';
+import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
+import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 
 registerLocaleData(localeBr, 'pt')
 @NgModule({
@@ -55,7 +59,11 @@ registerLocaleData(localeBr, 'pt')
     NgbModule,
     FormsModule,
     NgbModalModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt' },
