@@ -44,6 +44,9 @@
     .imgList{
         width: 15vw;
     }
+    .w-50{
+        width: 75% !important;
+    }
 }
 @media screen and (max-width: 820px) {
     .dashboard {
@@ -105,4 +108,9 @@
     .imgList{
         width: 65vw;
     }
+}
+
+.active{
+    background-color: white;
+    color: black;
 }

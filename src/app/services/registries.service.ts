@@ -38,6 +38,16 @@ export class RegistriesService {
     })
     return allRegistries
   }
+  async getRegistriesFromPublisher(collectionName: string, id: string): Promise<Observable<any>> {
+    let allRegistries: any = []
+    const registryRef = collection(this.firestore, collectionName );
+    const getRegistriesByDay = query(registryRef, where("meta.publisher", "==", id))
+    const snapshot = await getDocs(getRegistriesByDay)
+    snapshot.forEach((element: any) => {
+      allRegistries.push({id: element.id, ...element.data()} as CalendarEvent)
+    })
+    return allRegistries
+  }
   addAndUpdateTime(registryTime: any, collectionName: string){
     if(registryTime.id){
       const registryRef = doc(this.firestore, `${collectionName}/${registryTime.id}`);

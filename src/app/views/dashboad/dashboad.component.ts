@@ -68,7 +68,7 @@ export class DashboadComponent implements OnInit, OnChanges {
   locale: string = 'pt';
 
   saveButton: boolean = true;
-  view: CalendarView = CalendarView.Day;
+  view: CalendarView = CalendarView.Month;
 
   CalendarView = CalendarView;
 
@@ -132,6 +132,8 @@ export class DashboadComponent implements OnInit, OnChanges {
   refresh = new Subject<void>();
 
   events: CalendarEvent[] = [];
+  dayEvents: CalendarEvent[] = [];
+
   totals: any = {
     email: '',
     hours: 0,
@@ -207,7 +209,8 @@ export class DashboadComponent implements OnInit, OnChanges {
     this.events = [];
     let collectionName: string = this.viewDate.getMonth().toString() + this.viewDate.getFullYear().toString()
     let day = this.viewDate.getDate()
-    this.service.getRegistriesFromDayByPublisher(collectionName, this.publicador.email, day).then((result: any) => {
+
+    this.service.getRegistriesFromPublisher(collectionName, this.publicador.email).then((result: any) => {
       result.forEach((element: any) => {
         element.start = new Date(element.start)
         element.end = new Date(element.end)
@@ -215,11 +218,16 @@ export class DashboadComponent implements OnInit, OnChanges {
         this.events.push(element)
       })
     }).finally(() => {
-      let lastDayOfMonth = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() + 1, 0);
-      this.viewDate.toDateString() == lastDayOfMonth.toDateString() ? this.sendRegistryButton = true : this.sendRegistryButton = false;
-      this.getTotals();
-      this.refresh.next();
+      this.events = [...this.events]
+      this.dayEvents = this.events.filter((registry : any) => registry.meta.day === day );
+      this.refresh.next()
     })
+    console.log('evento')
+  }
+
+  getDayEvents(){
+    let day = this.viewDate.getDate()
+    this.dayEvents = this.events.filter((registry : any) => registry.meta.day === day );
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -233,6 +241,7 @@ export class DashboadComponent implements OnInit, OnChanges {
         this.activeDayIsOpen = true;
       }
       this.viewDate = date;
+      this.hourSegmentClicked()
     }
   }
 
@@ -283,7 +292,6 @@ export class DashboadComponent implements OnInit, OnChanges {
     this.totals.magazines -= this.editingEvent.meta.magazines;
     this.totals.books -= this.editingEvent.meta.books;
     this.totals.revisits -= this.editingEvent.meta.revisits;
-    this.totals.studies -= this.editingEvent.meta.studies;
     this.service.deleteRegistry(this.editingEvent, collectionName)
     this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
       this.getTotals();
@@ -299,6 +307,12 @@ export class DashboadComponent implements OnInit, OnChanges {
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+    this.getDayEvents()
+  }
+
+  setDate(date: Date){
+    console.log(date)
+    this.viewDate = date
   }
   hourSegmentClicked() {
     this.modalData = {
@@ -323,23 +337,24 @@ export class DashboadComponent implements OnInit, OnChanges {
     if (this.modalData.endHour && this.modalData.startHour && this.modalData.endMinute && this.modalData.startMinute) {
       hour = ((Number(this.modalData.endHour) * 60) + Number(this.modalData.endMinute)) - ((Number(this.modalData.startHour) * 60) + Number(this.modalData.startMinute));
     }
-    let event: CalendarEvent = {
-      start: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.startMinute)), Number(this.modalData.startHour)),
-      end: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.endMinute)), Number(this.modalData.endHour)),
-      title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}.`,
-      color: { ...colors['yellow'] },
-      meta: {
-        day: this.viewDate.getDate(),
-        publisher: this.publicador.email,
-        ...this.modalData
-      }
-    }
+    
 
 
     let collectionName: string = this.viewDate.getMonth().toString() + this.viewDate.getFullYear().toString();
     let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
 
     if (this.editingEvent.id === undefined || this.editingEvent.id == '') {
+      let event: CalendarEvent = {
+        start: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.startMinute)), Number(this.modalData.startHour)),
+        end: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.endMinute)), Number(this.modalData.endHour)),
+        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}.`,
+        color: { ...colors['yellow'] },
+        meta: {
+          day: this.viewDate.getDate(),
+          publisher: this.publicador.email,
+          ...this.modalData
+        }
+      }
       this.service.addRegistry(event, collectionName)
       this.totals.hours += (hour);
       this.totals.magazines += this.modalData.magazines;
@@ -349,6 +364,17 @@ export class DashboadComponent implements OnInit, OnChanges {
       let editingHour: number = 0;
       if (this.editingEvent.meta.endHour && this.editingEvent.meta.startHour && this.editingEvent.meta.endMinute && this.editingEvent.meta.startMinute) {
         editingHour = ((Number(this.editingEvent.meta.endHour) * 60) + Number(this.editingEvent.meta.endMinute)) - ((Number(this.editingEvent.meta.startHour) * 60) + Number(this.editingEvent.meta.startMinute));
+      }
+      let event: CalendarEvent = {
+        start: this.editingEvent.start,
+        end: this.editingEvent.end,
+        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}.`,
+        color: { ...colors['yellow'] },
+        meta: {
+          day: this.viewDate.getDate(),
+          publisher: this.publicador.email,
+          ...this.modalData
+        }
       }
       event.id = this.editingEvent.id
       this.deleteEvent(this.editingEvent)
@@ -520,6 +546,10 @@ export class DashboadComponent implements OnInit, OnChanges {
   }
   showVideo(){
     this.modal.open(this.modalVideo, { size: 'lg' });
+  }
+
+  getDayClicked(){
+    console.log('day clicked')
   }
 }
 
