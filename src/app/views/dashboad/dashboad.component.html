@@ -11,6 +11,18 @@
             <h6 class="card-subtitle mb-2 text-muted">Minutos: {{totals.hours%60 }}</h6>
           </div>
           <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Horas Bonus: {{totals.bonus/60 | round }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Minutos Bonus: {{totals.bonus%60 }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Horas Totais: {{(totals.bonus + totals.hours)/60 | round }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Minutos Totais: {{(totals.bonus + totals.hours)%60 }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
             <h6 class="card-subtitle mb-2 text-muted">Revistas: {{totals.magazines}}</h6>
           </div>
           <div class="col-lg-4 col-md-6">
@@ -24,68 +36,83 @@
           </div>
         </div>
       </div>
-      <div *ngIf="sendRegistryButton" class="my-2 d-flex row justify-content-center">
+      <div *ngIf="sendRegistryButton || view == 'month'" class="my-2 d-flex row justify-content-center">
         <button class="btn btn-success" (click)="openWhatsappModal()">Enviar relatorio via whatsapp</button>
       </div>
     </div>
   </div>
 
   <div class="d-flex row justify-content-center">
-    <div class="card mb-5 w-50" >
+    <div class="card mb-5 w-50">
       <div class="card-body">
         <h5 class="card-title text-center">Perfil</h5>
         <div class="row">
-          <div class="col-lg-12">
+          <!-- <div class="col"> -->
+          <div class="col-lg-4 col-md-6">
+
             <input class="form-check-input" type="radio" (click)="changePerfil()" [(ngModel)]="publicador.perfil"
               value="especial" name="flexRadioDefault">
             <label class="form-check-label mx-1">
               Pioneiro Especial
             </label>
+          </div>
+          <div class="col-lg-4 col-md-6">
+
             <input class="form-check-input mx-1" type="radio" (click)="changePerfil()" [(ngModel)]="publicador.perfil"
               value="regular" name="flexRadioDefault">
             <label class="form-check-label mx-1">
               Pioneiro Regular
             </label>
+          </div>
+          <div class="col-lg-4 col-md-6">
+
             <input class="form-check-input mx-1" type="radio" (click)="changePerfil()" [(ngModel)]="publicador.perfil"
               value="auxiliar" name="flexRadioDefault">
             <label class="form-check-label mx-1">
               Pioneiro Auxiliar
             </label>
+          </div>
+          <div class="col-lg-4 col-md-6">
+
             <input class="form-check-input mx-1" type="radio" (click)="changePerfil()" [(ngModel)]="publicador.perfil"
               value="campanha" name="flexRadioDefault">
             <label class="form-check-label mx-1">
               Pioneiro Auxiliar de Campanha
             </label>
+          </div>
+          <div class="col-lg-4 col-md-6">
+
             <input class="form-check-input mx-1" type="radio" (click)="changePerfil()" [(ngModel)]="publicador.perfil"
               value="publicador" name="flexRadioDefault">
             <label class="form-check-label">
               Publicador
             </label>
           </div>
+          <!-- </div> -->
           <div [ngSwitch]="publicador.perfil">
             <div *ngSwitchCase="'publicador'">
               <h6 class="card-subtitle mb-2 text-muted mt-2"> A média de horas para publicadores é de : 11 horas
-                mensais. Voce ainda precisa de {{ 11*60 - totals.hours | hours}} este mês.</h6>
+                mensais. Voce ainda precisa de {{ 11*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
             </div>
             <div *ngSwitchCase="'especial'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro especial é de 100 horas. Você
-                precisa em média {{ 100*60 / lastDay | hours }} por dia. Sua média até agora é de {{totals.hours / today
-                | hours}}. Voce ainda precisa de {{ 100*60 - totals.hours | hours}} este mês.</h6>
+                precisa em média {{ 100*60 / lastDay | hours }} por dia. Sua média até agora é de {{(totals.hours + totals.bonus) / today
+                | hours}}. Voce ainda precisa de {{ 100*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
             </div>
             <div *ngSwitchCase="'regular'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro regular é de 50 horas. Você
-                precisa em média {{ 50*60 / lastDay | hours }} por dia. Sua média até agora é de {{totals.hours / today
-                | hours}}. Voce ainda precisa de {{ 50*60 - totals.hours | hours}} este mês.</h6>
+                precisa em média {{ 50*60 / lastDay | hours }} por dia. Sua média até agora é de {{(totals.hours + totals.bonus) / today
+                | hours}}. Voce ainda precisa de {{ 50*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
             </div>
             <div *ngSwitchCase="'auxiliar'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro auxiliar é de 30 horas. Você
-                precisa em média {{ 30*60 / lastDay | hours }} por dia. Sua média até agora é de {{totals.hours / today
-                | hours}}. Voce ainda precisa de {{ 30*60 - totals.hours | hours}} este mês.</h6>
+                precisa em média {{ 30*60 / lastDay | hours }} por dia. Sua média até agora é de {{(totals.hours + totals.bonus) / today
+                | hours}}. Voce ainda precisa de {{ 30*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
             </div>
             <div *ngSwitchCase="'campanha'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro auxiliar de campanha é de 15
                 horas. Você precisa em média {{ 15*60 / lastDay | hours }} por dia. Sua média até agora é de
-                {{totals.hours / today | hours}}. Voce ainda precisa de {{ 15*60 - totals.hours | hours}} este mês.</h6>
+                {{(totals.hours + totals.bonus) / today | hours}}. Voce ainda precisa de {{ 15*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
             </div>
           </div>
         </div>
@@ -119,7 +146,8 @@
         </div>
         <div class="btn btn-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">
           Mês
-        </div><div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+        </div>
+        <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
           Semana
         </div>
       </div>
@@ -133,17 +161,19 @@
   </div>
 
   <div [ngSwitch]="view">
-    <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="dayEvents" [refresh]="refresh"
-      [locale]="locale" [hourSegments]="2" (eventClicked)="handleEvent('Clicked', $event.event)"
+    <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="dayEvents"
+      [refresh]="refresh" [locale]="locale" [hourSegments]="2" (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)" (hourSegmentClicked)="hourSegmentClicked()">
     </mwl-calendar-day-view>
-    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
-      [locale]="locale" (eventClicked)="handleEvent('Clicked', $event.event)" (dayClicked)="dayClicked($event.day)"
-      (eventTimesChanged)="eventTimesChanged($event)" (hourSegmentClicked)="hourSegmentClicked()">
+    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
+      [refresh]="refresh" [locale]="locale" (eventClicked)="handleEvent('Clicked', $event.event)"
+      (dayClicked)="dayClicked($event.day)" (eventTimesChanged)="eventTimesChanged($event)"
+      (hourSegmentClicked)="hourSegmentClicked()">
     </mwl-calendar-month-view>
-    <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
-      [locale]="locale" (eventClicked)="handleEvent('Clicked', $event.event)" (hourSegmentClicked)="setDate($event.date)"
-      (eventTimesChanged)="eventTimesChanged($event)" (hourSegmentClicked)="hourSegmentClicked()">
+    <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events"
+      [refresh]="refresh" [locale]="locale" (eventClicked)="handleEvent('Clicked', $event.event)"
+      (hourSegmentClicked)="setDate($event.date)" (eventTimesChanged)="eventTimesChanged($event)"
+      (hourSegmentClicked)="hourSegmentClicked()">
     </mwl-calendar-week-view>
   </div>
   <ng-template #loading>
@@ -166,6 +196,20 @@
       </button>
     </div>
     <div class="modal-body">
+      <div>
+        Horas bonus?
+        <input class="form-check-input" type="radio" [(ngModel)]="modalData.bonus" (click)="cancelVideo('true')"
+          value="true" name="flexRadioDefault">
+        <label class="form-check-label mx-1">
+          Sim
+        </label>
+        <input class="form-check-input" type="radio" [(ngModel)]="modalData.bonus" (click)="cancelVideo('false')"
+          value="false" name="flexRadioDefault">
+        <label class="form-check-label mx-1">
+          Não
+        </label>
+      </div>
+
       <div>
         Hora de inicio
         <select name="startHour" class="form-select" id="startHour" [(ngModel)]="modalData.startHour">
@@ -419,9 +463,9 @@
           </label>
         </div>
       </div>
-      
-      
-      
+
+
+
       <div class="mt-2">
         <table class="table">
           <thead>
@@ -660,44 +704,32 @@
         <vg-controls>
           <vg-play-pause></vg-play-pause>
           <vg-playback-button></vg-playback-button>
-          <vg-time-display
-            vgProperty="current"
-            vgFormat="mm:ss"
-          ></vg-time-display>
-          <vg-time-display
-            vgProperty="total"
-            vgFormat="mm:ss"
-          ></vg-time-display>
+          <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+          <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
           <vg-mute></vg-mute>
           <vg-volume></vg-volume>
           <vg-fullscreen></vg-fullscreen>
         </vg-controls>
-        <video
-          #media
-          [vgMedia]="$any(media)"
-          [src]="currentVideo.src"
-          id="singleVideo"
-          preload="auto"
-          crossorigin
-        ></video>
+        <video #media [vgMedia]="$any(media)" [src]="currentVideo.src" id="singleVideo" preload="auto"
+          crossorigin></video>
       </vg-player>
       <span>
         Mostrar video nas proximas visitas:
       </span>
       <br>
-      <input class="form-check-input" type="radio" [(ngModel)]="publicador.showVideo"
-        (click)="cancelVideo('true')" value="true" name="flexRadioDefault">
+      <input class="form-check-input" type="radio" [(ngModel)]="publicador.showVideo" (click)="cancelVideo('true')"
+        value="true" name="flexRadioDefault">
       <label class="form-check-label mx-1">
         Sim
       </label>
-      <input class="form-check-input" type="radio" [(ngModel)]="publicador.showVideo"
-        (click)="cancelVideo('false')" value="false" name="flexRadioDefault">
+      <input class="form-check-input" type="radio" [(ngModel)]="publicador.showVideo" (click)="cancelVideo('false')"
+        value="false" name="flexRadioDefault">
       <label class="form-check-label mx-1">
         Não
       </label>
     </div>
     <div class="modal-footer">
-     
+
       <button type="button" class="btn btn-primary" (click)="close()">
         Fechar
       </button>

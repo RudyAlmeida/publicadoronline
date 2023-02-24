@@ -83,7 +83,8 @@ export class DashboadComponent implements OnInit, OnChanges {
     magazines?: number;
     books?: number;
     revisits?: number;
-    studies?: number
+    studies?: number;
+    bonus?: String
   };
   newRevisit!: {
     id?: String,
@@ -137,6 +138,8 @@ export class DashboadComponent implements OnInit, OnChanges {
   totals: any = {
     email: '',
     hours: 0,
+    bonus: 0,
+    total: 0,
     magazines: 0,
     books: 0,
     revisits: 0,
@@ -158,8 +161,8 @@ export class DashboadComponent implements OnInit, OnChanges {
   sendWhatsapp: boolean = true;
   lastDay: number = 30;
   today: number = new Date().getDate()
-  minutesArray: any [] = []
-  meses: String[] = [  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']; 
+  minutesArray: any[] = []
+  meses: String[] = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   diasDaSemana: String[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   spinner: boolean = false;
   spinnerEdit: boolean = false;
@@ -176,7 +179,7 @@ export class DashboadComponent implements OnInit, OnChanges {
   currentVideo = this.videoItems[this.activeIndex];
   data: any;
 
-  constructor(private authService: SocialAuthService, private modal: NgbModal, private toastr: ToastrService, private service: RegistriesService, private fileService: FileService ) { }
+  constructor(private authService: SocialAuthService, private modal: NgbModal, private toastr: ToastrService, private service: RegistriesService, private fileService: FileService) { }
 
   ngOnInit(): void {
     let user = localStorage.getItem('publicador')
@@ -185,11 +188,11 @@ export class DashboadComponent implements OnInit, OnChanges {
     this.totals.email = this.publicador.email;
     this.getTotals()
     this.getEvents()
-    for(let i = 0; i <= 59; i++){
-      let minute = {'value' : i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}), 'title' : i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}
+    for (let i = 0; i <= 59; i++) {
+      let minute = { 'value': i.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false }), 'title': i.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false }) }
       this.minutesArray.push(minute)
     }
-    if(this.publicador.showVideo == "true"){
+    if (this.publicador.showVideo == "true") {
       this.modal.open(this.modalVideo, { size: 'lg' });
     }
   }
@@ -203,7 +206,7 @@ export class DashboadComponent implements OnInit, OnChanges {
     let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`
     this.lastDay = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() + 1, 0).getDate()
 
-    this.service.getTotals(totalCollectionName, this.publicador.email).then((result: any) => { this.totals = result.length == 0 ? this.totals = { email: this.publicador.email, hours: 0, magazines: 0, books: 0, revisits: 0, studies: 0 } : result[0] }).finally(() => this.refresh.next())
+    this.service.getTotals(totalCollectionName, this.publicador.email).then((result: any) => { this.totals = result.length == 0 ? this.totals = { email: this.publicador.email, hours: 0, bonus: 0, magazines: 0, books: 0, revisits: 0, studies: 0 } : result[0] }).finally(() => this.refresh.next())
   }
   getEvents() {
     this.events = [];
@@ -219,15 +222,14 @@ export class DashboadComponent implements OnInit, OnChanges {
       })
     }).finally(() => {
       this.events = [...this.events]
-      this.dayEvents = this.events.filter((registry : any) => registry.meta.day === day );
+      this.dayEvents = this.events.filter((registry: any) => registry.meta.day === day);
       this.refresh.next()
     })
-    console.log('evento')
   }
 
-  getDayEvents(){
+  getDayEvents() {
     let day = this.viewDate.getDate()
-    this.dayEvents = this.events.filter((registry : any) => registry.meta.day === day );
+    this.dayEvents = this.events.filter((registry: any) => registry.meta.day === day);
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -288,7 +290,7 @@ export class DashboadComponent implements OnInit, OnChanges {
     if (this.editingEvent.meta.endHour && this.editingEvent.meta.startHour && this.editingEvent.meta.endMinute && this.editingEvent.meta.startMinute) {
       deleteHour = ((Number(this.editingEvent.meta.endHour) * 60) + Number(this.editingEvent.meta.endMinute)) - ((Number(this.editingEvent.meta.startHour) * 60) + Number(this.editingEvent.meta.startMinute));
     }
-    this.totals.hours -= (deleteHour);
+    this.editingEvent.meta.bonus == "true" ? this.totals.bonus -= (deleteHour) : this.totals.hours -= (deleteHour)
     this.totals.magazines -= this.editingEvent.meta.magazines;
     this.totals.books -= this.editingEvent.meta.books;
     this.totals.revisits -= this.editingEvent.meta.revisits;
@@ -310,8 +312,7 @@ export class DashboadComponent implements OnInit, OnChanges {
     this.getDayEvents()
   }
 
-  setDate(date: Date){
-    console.log(date)
+  setDate(date: Date) {
     this.viewDate = date
   }
   hourSegmentClicked() {
@@ -324,6 +325,7 @@ export class DashboadComponent implements OnInit, OnChanges {
       magazines: 0,
       books: 0,
       revisits: 0,
+      bonus: "false"
     }
     if (this.editingEvent != undefined) {
       this.editingEvent.id = ""
@@ -337,17 +339,17 @@ export class DashboadComponent implements OnInit, OnChanges {
     if (this.modalData.endHour && this.modalData.startHour && this.modalData.endMinute && this.modalData.startMinute) {
       hour = ((Number(this.modalData.endHour) * 60) + Number(this.modalData.endMinute)) - ((Number(this.modalData.startHour) * 60) + Number(this.modalData.startMinute));
     }
-    
+
 
 
     let collectionName: string = this.viewDate.getMonth().toString() + this.viewDate.getFullYear().toString();
     let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
-
+    let bonus = this.modalData.bonus == "true" ? "Sim" : "Não"
     if (this.editingEvent.id === undefined || this.editingEvent.id == '') {
       let event: CalendarEvent = {
         start: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.startMinute)), Number(this.modalData.startHour)),
         end: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.endMinute)), Number(this.modalData.endHour)),
-        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}.`,
+        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}, Bonus: ${bonus}.`,
         color: { ...colors['yellow'] },
         meta: {
           day: this.viewDate.getDate(),
@@ -356,7 +358,7 @@ export class DashboadComponent implements OnInit, OnChanges {
         }
       }
       this.service.addRegistry(event, collectionName)
-      this.totals.hours += (hour);
+      this.modalData.bonus == "true" ? this.totals.bonus += (hour) : this.totals.hours += (hour);
       this.totals.magazines += this.modalData.magazines;
       this.totals.books += this.modalData.books;
       this.totals.revisits += this.modalData.revisits;
@@ -368,7 +370,7 @@ export class DashboadComponent implements OnInit, OnChanges {
       let event: CalendarEvent = {
         start: this.editingEvent.start,
         end: this.editingEvent.end,
-        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}.`,
+        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits},  Bonus: ${bonus}..`,
         color: { ...colors['yellow'] },
         meta: {
           day: this.viewDate.getDate(),
@@ -378,7 +380,32 @@ export class DashboadComponent implements OnInit, OnChanges {
       }
       event.id = this.editingEvent.id
       this.deleteEvent(this.editingEvent)
-      editingHour <= hour ? this.totals.hours += (hour - editingHour) : this.totals.hours -= (editingHour - hour)
+      if (this.modalData.bonus == this.editingEvent.meta.bonus) {
+        if (this.modalData.bonus == "true") {
+          editingHour <= hour ? this.totals.bonus += (hour - editingHour) : this.totals.bonus -= (editingHour - hour)
+        } else {
+          editingHour <= hour ? this.totals.hours += (hour - editingHour) : this.totals.hours -= (editingHour - hour)
+        }
+      } else {
+        if (this.modalData.bonus == "true") {
+          if (editingHour == hour) {
+            this.totals.bonus += editingHour, this.totals.hours -= editingHour
+          } else {              
+              this.totals.bonus += hour
+              this.totals.hours -= editingHour
+          }
+        } else {
+          if (editingHour == hour) {
+            this.totals.bonus -= editingHour, this.totals.hours += editingHour
+          } else {
+            if (editingHour > hour) {
+              this.totals.hours += (editingHour - hour), this.totals.bonus -= editingHour
+            } else {
+              this.totals.hours += (hour - editingHour), this.totals.bonus -= editingHour
+            }
+          }
+        }
+      }
       this.editingEvent.meta.magazines <= (this.modalData.magazines as number) ? this.totals.magazines += (this.modalData.magazines as number - this.editingEvent.meta.magazines) : this.totals.magazines -= (this.editingEvent.meta.magazines - (this.modalData.magazines as number))
       this.editingEvent.meta.books <= (this.modalData.books as number) ? this.totals.books += (this.modalData.books as number - this.editingEvent.meta.books) : this.totals.books -= (this.editingEvent.meta.books - (this.modalData.books as number));
       this.editingEvent.meta.revisits <= (this.modalData.revisits as number) ? this.totals.revisits += (this.modalData.revisits as number - this.editingEvent.meta.revisits) : this.totals.revisits -= (this.editingEvent.meta.revisits - (this.modalData.revisits as number))
@@ -402,22 +429,22 @@ export class DashboadComponent implements OnInit, OnChanges {
       }
     }
   }
-  checkWhatsapp(){
-    this.sendWhatsapp =  this.elder.length >= 3 && this. elderNumber.toString().length >= 10 ? false : true;
+  checkWhatsapp() {
+    this.sendWhatsapp = this.elder.length >= 3 && this.elderNumber.toString().length >= 10 ? false : true;
   }
   openWhatsappModal() {
     this.modal.open(this.modalWhatsapp, { size: 'lg' });
   }
   sendRegistry() {
-    let text = window.encodeURIComponent(`Olá ${this.elder} segue o meu relatório \nHoras: ${Math.floor(this.totals.hours / 60)}\nMinutos: ${this.totals.hours % 60}\nRevistas: ${this.totals.magazines}\nPublicações: ${this.totals.books}\nRevisitas: ${this.totals.revisits}\nEstudos: ${this.totals.studies}`);
+    let text = window.encodeURIComponent(`Olá ${this.elder} segue o meu relatório \nHoras: ${Math.floor(this.totals.hours / 60)}\nMinutos: ${this.totals.hours % 60}\nRevistas: ${this.totals.magazines}\nPublicações: ${this.totals.books}\nRevisitas: ${this.totals.revisits}\nEstudos: ${this.totals.studies} Obs: Horas Bonus: \nHoras: ${Math.floor(this.totals.bonus / 60)}\nMinutos: ${this.totals.bonus % 60}\n. Totais com horas bonus: \nHoras: ${Math.floor((this.totals.hours + this.totals.bonus) / 60)}\nMinutos: ${(this.totals.hours + this.totals.bonus) % 60}\n`);
     window.open(`https://api.whatsapp.com/send?phone=55${this.elderNumber}&text=${text}`, "_blank");
   }
-  changePerfil(){
-    setTimeout(()=>{
+  changePerfil() {
+    setTimeout(() => {
       localStorage.setItem('publicador', JSON.stringify(this.publicador));
-    },500)
+    }, 500)
   }
-  openRevisitModal(){
+  openRevisitModal() {
     this.modal.open(this.modalNewRevisit, { size: 'lg' });
     this.newRevisit = {
       publisher: this.publicador.email,
@@ -435,16 +462,16 @@ export class DashboadComponent implements OnInit, OnChanges {
     }
     this.comment = ''
   }
-  saveNewRevisit(){
-    this.newRevisit.comments?.push({day: this.viewDate.getDate(), month: this.viewDate.getMonth(), comment: this.comment })
-    this.service.addRevisit(this.newRevisit).then(result => console.log(result))
+  saveNewRevisit() {
+    this.newRevisit.comments?.push({ day: this.viewDate.getDate(), month: this.viewDate.getMonth(), comment: this.comment })
+    this.service.addRevisit(this.newRevisit)
     this.modal.dismissAll();
   }
-  openListRevisitModal(){
+  openListRevisitModal() {
     this.modal.open(this.modalListRevisits, { size: 'lg' });
-    this.service.getRevisits(this.publicador.email).then(result => {this.allRevists = result, this.myRevisits = [...this.allRevists]} ).then(()=>{
-      let studies = this.allRevists.filter((student : any) => student.isActiveStudy ==="true" );
-      if(studies.length != this.totals.studies){
+    this.service.getRevisits(this.publicador.email).then(result => { this.allRevists = result, this.myRevisits = [...this.allRevists] }).then(() => {
+      let studies = this.allRevists.filter((student: any) => student.isActiveStudy === "true");
+      if (studies.length != this.totals.studies) {
         this.totals.studies = studies.length;
         let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
         this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
@@ -453,20 +480,20 @@ export class DashboadComponent implements OnInit, OnChanges {
       }
     })
   }
-  filterStudentes(type: String){
-    this.myRevisits = type == "true" ? this.allRevists.filter((student : any) => student.isActiveStudy ==="true" ) :  type == "false" ? this.allRevists.filter((student : any) => student.isActiveStudy ==="false" ) : [...this.allRevists]
+  filterStudentes(type: String) {
+    this.myRevisits = type == "true" ? this.allRevists.filter((student: any) => student.isActiveStudy === "true") : type == "false" ? this.allRevists.filter((student: any) => student.isActiveStudy === "false") : [...this.allRevists]
   }
-  openEditRevisitModal(revist: any){
+  openEditRevisitModal(revist: any) {
     this.comment = ''
     this.editingRevist = revist
     this.modal.open(this.modalEditRevisit, { size: 'lg' });
   }
-  EditRevisit(){
+  EditRevisit() {
     this.service.editRevist(this.editingRevist)
   }
-  newComment(){
-    this.editingRevist.comments?.push({day: this.viewDate.getDate(), month: this.viewDate.getMonth(), comment: this.comment })
-    this.service.editRevist(this.editingRevist).then(()=>this.comment = '')
+  newComment() {
+    this.editingRevist.comments?.push({ day: this.viewDate.getDate(), month: this.viewDate.getMonth(), comment: this.comment })
+    this.service.editRevist(this.editingRevist).then(() => this.comment = '')
   }
 
   uploadFile(event: any) {
@@ -475,9 +502,9 @@ export class DashboadComponent implements OnInit, OnChanges {
     let reader = new FileReader()
     let nome = "imagem"
     reader.readAsDataURL(file)
-    reader.onloadend = () =>{
-      this.fileService.uploadFile(`${this.publicador.firstName + this.publicador.lastName}`, nome+Date.now(), reader.result).then(
-        (urlImagem: any) =>{
+    reader.onloadend = () => {
+      this.fileService.uploadFile(`${this.publicador.firstName + this.publicador.lastName}`, nome + Date.now(), reader.result).then(
+        (urlImagem: any) => {
           this.newRevisit.imagem = urlImagem
           this.spinner = false;
         }
@@ -490,16 +517,16 @@ export class DashboadComponent implements OnInit, OnChanges {
     let reader = new FileReader()
     let nome = "imagem"
     reader.readAsDataURL(file)
-    reader.onloadend = () =>{
-      this.fileService.uploadFile(`${this.publicador.firstName + this.publicador.lastName}`, nome+Date.now(), reader.result).then(
-        (urlImagem: any) =>{
+    reader.onloadend = () => {
+      this.fileService.uploadFile(`${this.publicador.firstName + this.publicador.lastName}`, nome + Date.now(), reader.result).then(
+        (urlImagem: any) => {
           this.editingRevist.imagem = urlImagem
           this.spinnerEdit = false;
         }
       )
     }
   }
-  updateStudies(isActive: String){
+  updateStudies(isActive: String) {
     isActive == "true" ? this.totals.studies++ : this.totals.studies--;
     let totalCollectionName: string = `totals-${this.viewDate.getMonth().toString()}-${this.viewDate.getFullYear().toString()}`;
     this.service.addAndUpdateTime(this.totals, totalCollectionName).finally(() => {
@@ -507,18 +534,18 @@ export class DashboadComponent implements OnInit, OnChanges {
       this.service.editRevist(this.editingRevist);
     });
   }
-  editComment(comment : any, id: number){
+  editComment(comment: any, id: number) {
     this.edittingComment = comment;
     this.edittingId = id;
     this.isEdittingComment = true
   }
-  saveEditedComment(){
+  saveEditedComment() {
     this.editingRevist.comments[this.edittingId] = this.edittingComment;
-    this.service.editRevist(this.editingRevist).then(()=>{
+    this.service.editRevist(this.editingRevist).then(() => {
       this.isEdittingComment = false;
     })
   }
-  showImage(){
+  showImage() {
     this.modal.open(this.modalImagem, { size: 'lg' });
   }
   videoPlayerInit(data: any) {
@@ -540,17 +567,14 @@ export class DashboadComponent implements OnInit, OnChanges {
     this.activeIndex = index;
     this.currentVideo = item;
   }
-  cancelVideo(action: String){
+  cancelVideo(action: String) {
     action == "true" ? this.publicador.showVideo = "true" : this.publicador.showVideo = "false";
     localStorage.setItem('publicador', JSON.stringify(this.publicador))
   }
-  showVideo(){
+  showVideo() {
     this.modal.open(this.modalVideo, { size: 'lg' });
   }
 
-  getDayClicked(){
-    console.log('day clicked')
-  }
 }
 
 
