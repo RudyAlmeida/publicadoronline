@@ -1,0 +1,119 @@
+<p-table [value]="members" dataKey="name" [tableStyle]="{'min-width': '60rem'}"  [(selection)]="members" [exportHeader]="'customExportHeader'">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <button pButton label="Adicionar" class="p-button-outlined" icon="pi pi-plus" (click)="openSave()"></button>
+            <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning ms-2" pTooltip="PDF" tooltipPosition="bottom"></button>
+            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success ms-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 5rem"></th>
+            <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="phone">Telefone <p-sortIcon field="phone"></p-sortIcon></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="idRegistry">Perfil Relatorio <p-sortIcon field="idRegistry"></p-sortIcon></th>
+            <th>Ações</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-member let-expanded="expanded" let-i="rowIndex">
+        <tr>
+            <td>
+                <button type="button" pButton pRipple [pRowToggler]="member" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" (click)="getHours(member.idRegistry, i)"></button>
+            </td>
+            <td>{{member.name}}</td>
+            <td>{{member.phone}}</td>
+            <td>{{member.email}}</td>
+            <td>{{member.idRegistry}}</td>
+            <td><i class="pi pi-pencil me-3" style="color: blue;" (click)="openEdit(member)"></i><i class="pi pi-trash" style="color: red;" (click)="openDeleteModal(member)"></i></td>
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-member>
+        <tr>
+            <td colspan="7">
+                <div class="p-3">
+                    <p-table [value]="member.totals" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Horas</th>
+                                <th>Minutos</th>
+                                <th>Revistas</th>
+                                <th>Publicações</th>
+                                <th>Revisitas</th>
+                                <th>Estudos</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-totals>
+                            <tr>
+                                <td> {{(totals.bonus + totals.hours)/60 | round }}</td>
+                                <td> {{(totals.bonus + totals.hours)%60 }}</td>
+                                <td>{{totals.magazines}}</td>
+                                <td>{{totals.books}}</td>
+                                <td>{{totals.revisits}}</td>
+                                <td>{{totals.studies}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="6">Sem horas relatadas</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<ng-template #addMember let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Enviei seu relatorio</h5>
+      <button type="button" class="btn btn-primary close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Nome da publicador:
+        <input type="text" class="form-control" [(ngModel)]="member.name" name="elder">
+      </div>
+      <div>
+        Telefone(s)
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.phone"
+          name="phone">
+      </div>
+      <div>
+        Email
+        <input type="email" class="form-control removeArrows" [(ngModel)]="member.email"
+          name="email">
+      </div>
+      <div>
+        Id relatorio
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.idRegistry"
+          name="idRegistry">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" [disabled]="member.name.length < 3 && member.email.length < 5 && member.phone.length < 5" class="btn btn-success" (click)="close(); saveMember()">
+        Salvar
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #modalDelete let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Deletar Registro</h5>
+      <button type="button" class="btn btn-primary close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="text-danger">Deletar o registro?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="close(); deleteFromDb()">
+        Sim, deletar!
+      </button>
+    </div>
+  </ng-template>

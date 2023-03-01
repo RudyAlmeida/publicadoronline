@@ -1,0 +1,67 @@
+<div class="d-flex row justify-content-center">
+    <div class="card my-5 w-50">
+      <div class="card-body">
+        <h5 class="card-title text-center">Seu reusmo do mês</h5>
+        <div class="row">
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Horas : {{totals.hours/60 | round }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Minutos: {{totals.hours%60 }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Horas Bonus: {{totals.bonus/60 | round }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Minutos Bonus: {{totals.bonus%60 }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Horas Totais: {{(totals.bonus + totals.hours)/60 | round }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Minutos Totais: {{(totals.bonus + totals.hours)%60 }}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Revistas: {{totals.magazines}}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Publicações: {{totals.books}}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Revisitas: {{totals.revisits}}</h6>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <h6 class="card-subtitle mb-2 text-muted">Estudos: {{totals.studies}}</h6>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="sendRegistryButton || view == 'month'" class="my-2 d-flex row justify-content-center">
+        <button class="btn btn-success" (click)="openWhatsappModal()">Enviar relatorio via whatsapp</button>
+      </div>
+    </div>
+  </div>
+  <ng-template #modalWhatsapp let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Enviei seu relatorio</h5>
+      <button type="button" class="btn btn-primary close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Nome do ancião:
+        <input type="text" class="form-control" (keyup)="checkWhatsapp()" [(ngModel)]="elder" name="elder">
+      </div>
+      <div>
+        Número do whatsapp (Somente numeros ex: 11998881122)
+        <input type="number" class="form-control removeArrows" (keyup)="checkWhatsapp()" [(ngModel)]="elderNumber"
+          name="elderNumber">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" [disabled]="sendWhatsapp" class="btn btn-success" (click)="close(); sendRegistry()">
+        Enviar!
+      </button>
+    </div>
+  </ng-template>
+  <app-perfil [lastDay]="lastDay" [totals]="totals" [publicador]="publicador"></app-perfil>

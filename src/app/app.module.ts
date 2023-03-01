@@ -32,6 +32,17 @@ import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
+import { TotalsComponent } from './components/totals/totals.component';
+import { PerfilComponent } from './components/perfil/perfil.component';
+import { ContactsComponent } from './views/contacts/contacts.component';
+
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { CongregationComponent } from './views/congregation/congregation.component';
+import { LoginCongregationComponent } from './views/login-congregation/login-congregation.component';
+import { LoginContactsComponent } from './views/login-contacts/login-contacts.component'
+import { InputTextModule } from 'primeng/inputtext';
+
 
 registerLocaleData(localeBr, 'pt')
 @NgModule({
@@ -42,7 +53,13 @@ registerLocaleData(localeBr, 'pt')
     FooterComponent,
     HeaderComponent,
     RoundPipe,
-    MinutesToHours
+    MinutesToHours,
+    TotalsComponent,
+    PerfilComponent,
+    ContactsComponent,
+    CongregationComponent,
+    LoginCongregationComponent,
+    LoginContactsComponent
   ],
   imports: [
     BrowserModule,
@@ -63,7 +80,10 @@ registerLocaleData(localeBr, 'pt')
     VgCoreModule,
     VgControlsModule,
     VgOverlayPlayModule,
-    VgBufferingModule
+    VgBufferingModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt' },

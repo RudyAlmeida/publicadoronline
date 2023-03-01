@@ -1,0 +1,83 @@
+<p-table [value]="congregations" dataKey="name" styleClass="p-datatable-striped" [tableStyle]="{'min-width': '60rem'}">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <button pButton label="Adicionar" class="p-button-outlined" icon="pi pi-plus" (click)="openSave()"></button>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="id">Id<p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="lastName">Congregação <p-sortIcon field="lastName"></p-sortIcon></th>
+            <th pSortableColumn="email">E-mail <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="inventoryStatus">Ações</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-congregation let-expanded="expanded">
+        <tr>
+            <td>{{congregation.id}}</td>
+            <td>{{congregation.lastName}}</td>
+            <td>{{congregation.email}}</td>
+            <td><i class="pi pi-pencil me-3" style="color: blue;"></i><i class="pi pi-trash" style="color: red;"></i></td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-product>
+        <tr>
+            <td colspan="7">
+                <div class="p-3">
+                    <p-table [value]="product.orders" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="id">Id <p-sortIcon field="price"></p-sortIcon></th>
+                                <th pSortableColumn="customer">Customer <p-sortIcon field="customer"></p-sortIcon></th>
+                                <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+                                <th pSortableColumn="amount">Amount <p-sortIcon field="amount"></p-sortIcon></th>
+                                <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                                <th style="width: 4rem"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-order>
+                            <tr>
+                                <td>{{order.id}}</td>
+                                <td>{{order.customer}}</td>
+                                <td>{{order.id}}</td>
+                                <td>{{order.amount | currency:'USD'}}</td>
+                                <td><span [class]="'order-badge order-' + order.status.toLowerCase()">{{order.status}}</span></td>
+                                <td><p-button type="button" icon="pi pi-search"></p-button></td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="6">There are no order for this product yet.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<ng-template #addCongregation let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Enviei seu relatorio</h5>
+      <button type="button" class="btn btn-primary close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Nome da congregação:
+        <input type="text" class="form-control" [(ngModel)]="congregation.lastName" name="elder">
+      </div>
+      <div>
+        Email
+        <input type="email" class="form-control removeArrows" [(ngModel)]="congregation.email"
+          name="elderNumber">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" [disabled]="congregation.lastName.length < 3 && congregation.email.length < 5" class="btn btn-success" (click)="close(); saveCongregation()">
+        Salvar
+      </button>
+    </div>
+  </ng-template>

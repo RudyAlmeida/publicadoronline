@@ -1,0 +1,17 @@
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background: #0f0f0f;
+    color: aliceblue;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+    background: #490303;
+    color: aliceblue;
+}
+:host :hover ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    background: #0f0f0f;
+    color: aliceblue;
+}
+:host ::ng-deep .p-datatable .p-sortable-column.p-highlight {
+    background: #0f0f0f;
+    color: aliceblue;
+}

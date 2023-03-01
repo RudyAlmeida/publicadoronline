@@ -310,6 +310,8 @@ export class DashboadComponent implements OnInit, OnChanges {
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
     this.getDayEvents()
+    this.getTotals()
+    this.getEvents()
   }
 
   setDate(date: Date) {

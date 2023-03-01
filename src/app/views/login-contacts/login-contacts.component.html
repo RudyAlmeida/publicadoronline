@@ -1,0 +1,27 @@
+<section class="d-flex align-items-center vh-100 mt-5  align-middle">
+    <div class="container-fluid">
+      <div class="row d-flex justify-content-center align-middle align-items-center">
+        <div class="col-md-9 col-lg-6 col-xl-5">
+          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+            class="img-fluid" alt="Sample image">
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+              <div class="col">
+                <span class="p-float-label">
+                    <input id="float-input" name="email" [(ngModel)]="login.email" type="text" pInputText> 
+                    <label for="float-input">E-mail</label>
+                </span>
+              </div>
+              <div class="col">
+                <label for="password">Senha</label>
+                <input type="password" name="password" id="password" [(ngModel)]="login.password">
+              </div>
+              <div class="col">
+                <button class="btn btn-primary" (click)="startLogin()">Entrar</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
