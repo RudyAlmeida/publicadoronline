@@ -351,8 +351,8 @@ export class DashboadComponent implements OnInit, OnChanges {
       let event: CalendarEvent = {
         start: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.startMinute)), Number(this.modalData.startHour)),
         end: setHours(setMinutes(new Date(this.viewDate), Number(this.modalData.endMinute)), Number(this.modalData.endHour)),
-        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}, Bonus: ${bonus}.`,
-        color: { ...colors['yellow'] },
+        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Vídeos: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits}, Bonus: ${bonus}.`,
+        color:  this.modalData.bonus == "true" ? { ...colors['red'] } : { ...colors['yellow'] },
         meta: {
           day: this.viewDate.getDate(),
           publisher: this.publicador.email,
@@ -372,7 +372,7 @@ export class DashboadComponent implements OnInit, OnChanges {
       let event: CalendarEvent = {
         start: this.editingEvent.start,
         end: this.editingEvent.end,
-        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Revistas: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits},  Bonus: ${bonus}..`,
+        title: `Horas: ${Math.floor(hour / 60)}, Minutos: ${hour % 60}, Vídeos: ${this.modalData.magazines}, Publicações: ${this.modalData.books}, Revisitas: ${this.modalData.revisits},  Bonus: ${bonus}..`,
         color: { ...colors['yellow'] },
         meta: {
           day: this.viewDate.getDate(),
@@ -437,10 +437,7 @@ export class DashboadComponent implements OnInit, OnChanges {
   openWhatsappModal() {
     this.modal.open(this.modalWhatsapp, { size: 'lg' });
   }
-  sendRegistry() {
-    let text = window.encodeURIComponent(`Olá ${this.elder} segue o meu relatório \nHoras: ${Math.floor(this.totals.hours / 60)}\nMinutos: ${this.totals.hours % 60}\nRevistas: ${this.totals.magazines}\nPublicações: ${this.totals.books}\nRevisitas: ${this.totals.revisits}\nEstudos: ${this.totals.studies} Obs: Horas Bonus: \nHoras: ${Math.floor(this.totals.bonus / 60)}\nMinutos: ${this.totals.bonus % 60}\n. Totais com horas bonus: \nHoras: ${Math.floor((this.totals.hours + this.totals.bonus) / 60)}\nMinutos: ${(this.totals.hours + this.totals.bonus) % 60}\n`);
-    window.open(`https://api.whatsapp.com/send?phone=55${this.elderNumber}&text=${text}`, "_blank");
-  }
+  
   changePerfil() {
     setTimeout(() => {
       localStorage.setItem('publicador', JSON.stringify(this.publicador));

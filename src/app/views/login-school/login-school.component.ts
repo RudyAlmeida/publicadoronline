@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from 'src/app/services/login.service';
 
 @Component({
-  selector: 'app-login-contacts',
-  templateUrl: './login-contacts.component.html',
-  styleUrls: ['./login-contacts.component.scss']
+  selector: 'app-login-school',
+  templateUrl: './login-school.component.html',
+  styleUrls: ['./login-school.component.scss']
 })
-export class LoginContactsComponent implements OnInit {
+export class LoginSchoolComponent implements OnInit {
   login: any = {
     email: '',
     password: ''
@@ -15,7 +15,7 @@ export class LoginContactsComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  startLogin() {
+  startLogin(){
     this.loginService.loginWithEmailAndPassword(this.login.email, this.login.password)
   }
 

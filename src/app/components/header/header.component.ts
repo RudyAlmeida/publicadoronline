@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
         let user = this.login.loginSuper()
         let parsed = user ? JSON.parse(user) : {}
         this. publicador = parsed[0]
-      } else if (eventUrl.url == "/contatos"){
+      } else if (eventUrl.url == "/contatos" || eventUrl.url == "/escola"){
         let user = this.login.loginCongregation()
         let parsed = user ? JSON.parse(user) : {}
         this. publicador = parsed[0]

@@ -48,7 +48,12 @@ export class TotalsComponent implements OnInit {
     this.sendWhatsapp = this.elder.length >= 3 && this.elderNumber.toString().length >= 10 ? false : true;
   }
   sendRegistry() {
-    let text = window.encodeURIComponent(`Olá ${this.elder} segue o meu relatório \nHoras: ${Math.floor(this.totals.hours / 60)}\nMinutos: ${this.totals.hours % 60}\nRevistas: ${this.totals.magazines}\nPublicações: ${this.totals.books}\nRevisitas: ${this.totals.revisits}\nEstudos: ${this.totals.studies} Obs: Horas Bonus: \nHoras: ${Math.floor(this.totals.bonus / 60)}\nMinutos: ${this.totals.bonus % 60}\n. Totais com horas bonus: \nHoras: ${Math.floor((this.totals.hours + this.totals.bonus) / 60)}\nMinutos: ${(this.totals.hours + this.totals.bonus) % 60}\n`);
+    let text = ''
+    if(this.totals.bonus > 0){
+      text = window.encodeURIComponent(`Olá ${this.elder} segue o meu relatório \nHoras: ${Math.floor(this.totals.hours / 60)}\nVídeos: ${this.totals.magazines}\nPublicações: ${this.totals.books}\nRevisitas: ${this.totals.revisits}\nEstudos: ${this.totals.studies} \nObs: Horas Bonus: \nHoras: ${Math.floor(this.totals.bonus / 60)}\n. Totais com horas bonus: \nHoras: ${Math.floor((this.totals.hours + this.totals.bonus) / 60)}\n`);
+    }else{
+      text = window.encodeURIComponent(`Olá ${this.elder} segue o meu relatório \nHoras: ${Math.floor(this.totals.hours / 60)}\nVídeos: ${this.totals.magazines}\nPublicações: ${this.totals.books}\nRevisitas: ${this.totals.revisits}\nEstudos: ${this.totals.studies} \n`);
+    }
     window.open(`https://api.whatsapp.com/send?phone=55${this.elderNumber}&text=${text}`, "_blank");
   }
 }

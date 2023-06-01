@@ -42,6 +42,8 @@ import { CongregationComponent } from './views/congregation/congregation.compone
 import { LoginCongregationComponent } from './views/login-congregation/login-congregation.component';
 import { LoginContactsComponent } from './views/login-contacts/login-contacts.component'
 import { InputTextModule } from 'primeng/inputtext';
+import { LoginSchoolComponent } from './views/login-school/login-school.component';
+import { SchoolComponent } from './views/school/school.component';
 
 
 registerLocaleData(localeBr, 'pt')
@@ -59,7 +61,9 @@ registerLocaleData(localeBr, 'pt')
     ContactsComponent,
     CongregationComponent,
     LoginCongregationComponent,
-    LoginContactsComponent
+    LoginContactsComponent,
+    LoginSchoolComponent,
+    SchoolComponent
   ],
   imports: [
     BrowserModule,

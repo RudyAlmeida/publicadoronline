@@ -37,8 +37,9 @@
                         <ng-template pTemplate="header">
                             <tr>
                                 <th>Horas</th>
-                                <th>Minutos</th>
-                                <th>Revistas</th>
+                                <th>Horas Bonus</th>
+                                <th>Total de Horas</th>
+                                <th>Vídeos</th>
                                 <th>Publicações</th>
                                 <th>Revisitas</th>
                                 <th>Estudos</th>
@@ -46,8 +47,9 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-totals>
                             <tr>
+                                <td> {{(totals.hours)/60 | round }}</td>
+                                <td> {{(totals.bonus)/60 | round }}</td>
                                 <td> {{(totals.bonus + totals.hours)/60 | round }}</td>
-                                <td> {{(totals.bonus + totals.hours)%60 }}</td>
                                 <td>{{totals.magazines}}</td>
                                 <td>{{totals.books}}</td>
                                 <td>{{totals.revisits}}</td>
@@ -68,7 +70,7 @@
 
 <ng-template #addMember let-close="close">
     <div class="modal-header">
-      <h5 class="modal-title">Enviei seu relatorio</h5>
+      <h5 class="modal-title">Entre os dados do publicador</h5>
       <button type="button" class="btn btn-primary close" (click)="close()">
         <span aria-hidden="true">&times;</span>
       </button>

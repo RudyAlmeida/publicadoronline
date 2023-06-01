@@ -51,22 +51,36 @@
             <div *ngSwitchCase="'especial'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro especial é de 100 horas. Você
                 precisa em média {{ 100*60 / lastDay | hours }} por dia. Sua média até agora é de {{(totals.hours + totals.bonus) / today
-                | hours}}. Voce ainda precisa de {{ 100*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
+                | hours}}. <span *ngIf="(100*60 - (totals.hours + totals.bonus)) >= 0; else especialSobrando">  Voce ainda precisa de {{ 100*60 - (totals.hours + totals.bonus) | hours}} este mês.</span>
+                <ng-template #especialSobrando>
+                  Você têm {{ (totals.hours + totals.bonus) - 100*60 | hours}} sobrando este mês.
+                </ng-template>  
+              </h6>
             </div>
             <div *ngSwitchCase="'regular'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro regular é de 50 horas. Você
                 precisa em média {{ 50*60 / lastDay | hours }} por dia. Sua média até agora é de {{(totals.hours + totals.bonus) / today
-                | hours}}. Voce ainda precisa de {{ 50*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
+                | hours}}.<span *ngIf="(50*60 - (totals.hours + totals.bonus)) >= 0; else regularSobrando">  Voce ainda precisa de {{ 50*60 - (totals.hours + totals.bonus) | hours}} este mês.</span>
+                <ng-template #regularSobrando>
+                  Você têm {{ (totals.hours + totals.bonus) - 50*60 | hours}} sobrando este mês.
+                </ng-template> 
+                </h6> 
             </div>
             <div *ngSwitchCase="'auxiliar'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro auxiliar é de 30 horas. Você
                 precisa em média {{ 30*60 / lastDay | hours }} por dia. Sua média até agora é de {{(totals.hours + totals.bonus) / today
-                | hours}}. Voce ainda precisa de {{ 30*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
+                | hours}}. <span *ngIf="(30*60 - (totals.hours + totals.bonus)) >= 0; else auxiliarSobrando">  Voce ainda precisa de {{ 30*60 - (totals.hours + totals.bonus) | hours}} este mês.</span>
+                <ng-template #auxiliarSobrando>
+                  Você têm {{ (totals.hours + totals.bonus) - 30*60 | hours}} sobrando este mês.
+                </ng-template> </h6>
             </div>
             <div *ngSwitchCase="'campanha'">
               <h6 class="card-subtitle mb-2 text-muted mt-2">A meta de horas para Pioneiro auxiliar de campanha é de 15
                 horas. Você precisa em média {{ 15*60 / lastDay | hours }} por dia. Sua média até agora é de
-                {{(totals.hours + totals.bonus) / today | hours}}. Voce ainda precisa de {{ 15*60 - (totals.hours + totals.bonus) | hours}} este mês.</h6>
+                {{(totals.hours + totals.bonus) / today | hours}}. <span *ngIf="(15*60 - (totals.hours + totals.bonus)) >= 0; else campanhaSobrando">  Voce ainda precisa de {{ 15*60 - (totals.hours + totals.bonus) | hours}} este mês.</span>
+                <ng-template #campanhaSobrando>
+                  Você têm {{ (totals.hours + totals.bonus) - 15*60 | hours}} sobrando este mês.
+                </ng-template> </h6>
             </div>
           </div>
         </div>

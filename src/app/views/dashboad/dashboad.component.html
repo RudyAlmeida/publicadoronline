@@ -163,7 +163,7 @@
         </select>
       </div>
       <div>
-        Revistas:
+        Vídeos:
         <input type="number" class="form-control" [(ngModel)]="modalData.magazines" name="magazines">
       </div>
       <div>
@@ -207,30 +207,7 @@
       </button>
     </div>
   </ng-template>
-  <ng-template #modalWhatsapp let-close="close">
-    <div class="modal-header">
-      <h5 class="modal-title">Enviei seu relatorio</h5>
-      <button type="button" class="btn btn-primary close" (click)="close()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div>
-        Nome do ancião:
-        <input type="text" class="form-control" (keyup)="checkWhatsapp()" [(ngModel)]="elder" name="elder">
-      </div>
-      <div>
-        Número do whatsapp (Somente numeros ex: 11998881122)
-        <input type="number" class="form-control removeArrows" (keyup)="checkWhatsapp()" [(ngModel)]="elderNumber"
-          name="elderNumber">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" [disabled]="sendWhatsapp" class="btn btn-success" (click)="close(); sendRegistry()">
-        Enviar!
-      </button>
-    </div>
-  </ng-template>
+  
   <ng-template #modalNewRevisit let-close="close">
     <div class="modal-header">
       <h5 class="modal-title">Adicionar registro de revisita</h5>

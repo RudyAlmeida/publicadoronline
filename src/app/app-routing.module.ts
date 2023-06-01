@@ -8,7 +8,9 @@ import { ContactsComponent } from './views/contacts/contacts.component';
 import { DashboadComponent } from './views/dashboad/dashboad.component';
 import { LoginCongregationComponent } from './views/login-congregation/login-congregation.component';
 import { LoginContactsComponent } from './views/login-contacts/login-contacts.component';
+import { LoginSchoolComponent } from './views/login-school/login-school.component';
 import { LoginComponent } from './views/login/login.component';
+import { SchoolComponent } from './views/school/school.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/relatorio', pathMatch:'full'},
@@ -18,8 +20,8 @@ const routes: Routes = [
   { path: 'congregacao', component: CongregationComponent, canActivate: [SuperGuard] },
   { path: 'contatos', component: ContactsComponent, canActivate: [ContactsGuard] },
   { path: 'contatos/login', component: LoginContactsComponent },
-
-
+  { path: 'escola/login', component: LoginSchoolComponent },
+  { path: 'escola', component: SchoolComponent, canActivate: [ContactsGuard] },
 
 ];
 
