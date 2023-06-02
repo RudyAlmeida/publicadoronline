@@ -44,6 +44,8 @@ import { LoginContactsComponent } from './views/login-contacts/login-contacts.co
 import { InputTextModule } from 'primeng/inputtext';
 import { LoginSchoolComponent } from './views/login-school/login-school.component';
 import { SchoolComponent } from './views/school/school.component';
+import { CarrinhoComponent } from './views/carrinho/carrinho.component';
+import { LoginCarrinhoComponent } from './views/login-carrinho/login-carrinho.component';
 
 
 registerLocaleData(localeBr, 'pt')
@@ -63,7 +65,9 @@ registerLocaleData(localeBr, 'pt')
     LoginCongregationComponent,
     LoginContactsComponent,
     LoginSchoolComponent,
-    SchoolComponent
+    SchoolComponent,
+    CarrinhoComponent,
+    LoginCarrinhoComponent
   ],
   imports: [
     BrowserModule,

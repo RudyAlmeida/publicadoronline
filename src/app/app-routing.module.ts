@@ -11,6 +11,7 @@ import { LoginContactsComponent } from './views/login-contacts/login-contacts.co
 import { LoginSchoolComponent } from './views/login-school/login-school.component';
 import { LoginComponent } from './views/login/login.component';
 import { SchoolComponent } from './views/school/school.component';
+import { CarrinhoComponent } from './views/carrinho/carrinho.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/relatorio', pathMatch:'full'},
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'contatos/login', component: LoginContactsComponent },
   { path: 'escola/login', component: LoginSchoolComponent },
   { path: 'escola', component: SchoolComponent, canActivate: [ContactsGuard] },
+  { path: 'carrinho', component: CarrinhoComponent, canActivate: [ContactsGuard]}
 
 ];
 

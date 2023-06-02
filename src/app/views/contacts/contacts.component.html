@@ -1,17 +1,23 @@
-<p-table [value]="members" dataKey="name" [tableStyle]="{'min-width': '60rem'}"  [(selection)]="members" [exportHeader]="'customExportHeader'">
+<p-table [value]="members" dataKey="firstName" [tableStyle]="{'min-width': '60rem'}"  [(selection)]="members" [exportHeader]="'customExportHeader'" sortField="firstName" >
     <ng-template pTemplate="caption">
         <div class="flex">
             <button pButton label="Adicionar" class="p-button-outlined" icon="pi pi-plus" (click)="openSave()"></button>
             <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning ms-2" pTooltip="PDF" tooltipPosition="bottom"></button>
             <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success ms-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
+            <button pButton label="Carrinhos" class="p-button-primary ms-2" icon="pi pi-plus" routerLink="/carrinho"></button>
         </div>
     </ng-template>
     <ng-template pTemplate="header">
         <tr>
             <th style="width: 5rem"></th>
-            <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
-            <th pSortableColumn="phone">Telefone <p-sortIcon field="phone"></p-sortIcon></th>
+            <th pSortableColumn="firstName">Nome <p-sortIcon field="firstName"></p-sortIcon></th>
+            <th pSortableColumn="cellPhone">Celular <p-sortIcon field="cellPhone"></p-sortIcon></th>
+            <th pSortableColumn="homePhone">Casa <p-sortIcon field="homePhone"></p-sortIcon></th>
+            <th pSortableColumn="workPhone">Trabalho <p-sortIcon field="workPhone"></p-sortIcon></th>
             <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="emergency">Contato de emergencia<p-sortIcon field="emergency"></p-sortIcon></th>
+            <th pSortableColumn="street">Rua <p-sortIcon field="street"></p-sortIcon></th>
+            <th pSortableColumn="city">Cidade <p-sortIcon field="city"></p-sortIcon></th>
             <th pSortableColumn="idRegistry">Perfil Relatorio <p-sortIcon field="idRegistry"></p-sortIcon></th>
             <th>Ações</th>
         </tr>
@@ -21,17 +27,22 @@
             <td>
                 <button type="button" pButton pRipple [pRowToggler]="member" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" (click)="getHours(member.idRegistry, i)"></button>
             </td>
-            <td>{{member.name}}</td>
-            <td>{{member.phone}}</td>
+            <td>{{member.firstName}} {{member.lastName}}</td>
+            <td>{{member.cellPhone}}</td>
+            <td>{{member.homePhone}}</td>
+            <td>{{member.workPhone}}</td>
             <td>{{member.email}}</td>
+            <td>{{member.emergency}}</td>
+            <td>{{member.street}}</td>
+            <td>{{member.city}}</td>
             <td>{{member.idRegistry}}</td>
-            <td><i class="pi pi-pencil me-3" style="color: blue;" (click)="openEdit(member)"></i><i class="pi pi-trash" style="color: red;" (click)="openDeleteModal(member)"></i></td>
+            <td><i class="pi pi-pencil me-3" style="color: lightgreen;" (click)="openEdit(member)"></i><i class="pi pi-trash" style="color: lightgreen;" (click)="openDeleteModal(member)"></i></td>
 
         </tr>
     </ng-template>
     <ng-template pTemplate="rowexpansion" let-member>
         <tr>
-            <td colspan="7">
+            <td colspan="11">
                 <div class="p-3">
                     <p-table [value]="member.totals" dataKey="id">
                         <ng-template pTemplate="header">
@@ -77,13 +88,27 @@
     </div>
     <div class="modal-body">
       <div>
-        Nome da publicador:
-        <input type="text" class="form-control" [(ngModel)]="member.name" name="elder">
+        Primeiro nome da publicador:
+        <input type="text" class="form-control" [(ngModel)]="member.firstName" name="firstName">
       </div>
       <div>
-        Telefone(s)
-        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.phone"
-          name="phone">
+        Sobrenome nome da publicador:
+        <input type="text" class="form-control" [(ngModel)]="member.lastName" name="lastName">
+      </div>
+      <div>
+        Telefone celular
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.cellPhone"
+          name="cellPhone">
+      </div>
+      <div>
+        Telefone de casa
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.homePhone"
+          name="homePhone">
+      </div>
+      <div>
+        Telefone de trabalho
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.workPhone"
+          name="workPhone">
       </div>
       <div>
         Email
@@ -91,13 +116,28 @@
           name="email">
       </div>
       <div>
-        Id relatorio
+        Contato de emergencia
+        <input type="text" class="form-control removeArrows" [(ngModel)]="member.emergency"
+          name="emergency">
+      </div>
+      <div>
+        Rua e Bairro
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.street"
+          name="street">
+      </div>
+      <div>
+        Cidade
+        <input type="phone" class="form-control removeArrows" [(ngModel)]="member.city"
+          name="city">
+      </div>
+      <div>
+        E-mail do sistema de relatorio
         <input type="phone" class="form-control removeArrows" [(ngModel)]="member.idRegistry"
           name="idRegistry">
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" [disabled]="member.name.length < 3 && member.email.length < 5 && member.phone.length < 5" class="btn btn-success" (click)="close(); saveMember()">
+      <button type="button" [disabled]="member.firstName.length < 3 && member.email.length < 5 && member.cellPhone.length < 5" class="btn btn-success" (click)="close(); saveMember()">
         Salvar
       </button>
     </div>

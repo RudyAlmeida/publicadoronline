@@ -5,82 +5,63 @@ import { RegistriesService } from 'src/app/services/registries.service';
 import * as FileSaver from 'file-saver';
 import * as JSPdf from 'jspdf';
 import autoTable from 'jspdf-autotable'
+import { FileService } from 'src/app/services/files.service';
+import { CarrinhoService } from 'src/app/services/carrinho.service';
 
 @Component({
-  selector: 'app-contacts',
-  templateUrl: './contacts.component.html',
-  styleUrls: ['./contacts.component.scss']
+  selector: 'app-carrinho',
+  templateUrl: './carrinho.component.html',
+  styleUrls: ['./carrinho.component.scss']
 })
-export class ContactsComponent implements OnInit {
+export class CarrinhoComponent implements OnInit {
   @ViewChild('addMember', { static: true }) addMember!: TemplateRef<any>;
   @ViewChild('modalDelete', { static: true }) modalDelete!: TemplateRef<any>;
 
   members: any[] = [];
   member: any = {
-    firstName: '',
-    lastName: '',
-    cellPhone: '',
-    homePhone: '',
-    workPhone: '',
-    email: '',
-    emergency: '',
-    street: '',
-    city: '',
-    idRegistry: '',
+    name: '',
+    phone: '',
+    imagem: '',
     congregationId: ''
   };
-  congregationId = '';
   exportColumns!: any[];
-  constructor(private modal: NgbModal, private contactService: ContactsService, private registryService: RegistriesService) { }
+  spinner: boolean = false;
+  spinnerEdit: boolean = false;
+  constructor(private modal: NgbModal, private kartService: CarrinhoService, private fileService: FileService) { }
 
   ngOnInit(): void {
-    let congregation = localStorage.getItem('congregation')
-    let parsedCongretaion = congregation ? JSON.parse(congregation) : '';
-    this.congregationId = parsedCongretaion[0].id
-    this.member.congregationId = this.congregationId
     this.getMembers();
-
+    let congregation = localStorage.getItem('congregation')
+    let id  = congregation ? JSON.parse(congregation) : []
+    this.member.congregationId = id ? id[0].id : []
   }
   getMembers() {
-    this.contactService.getMembers(this.congregationId).then((res: any) => {
+    this.kartService.getKartMembers(this.member.congregationId).then((res: any) => {
       this.members = res;
     })
   }
 
   openSave() {
     this.member = {
-      firstName: '',
-      lastName: '',
-      cellPhone: '',
-      homePhone: '',
-      workPhone: '',
-      email: '',
-      emergency: '',
-      street: '',
-      city: '',
-      idRegistry: '',
-      congregationId: this.congregationId
+      id: '',
+      name: '',
+      phone: '',
+      imagem: ''
     }
+    let congregation = localStorage.getItem('congregation')
+    let id  = congregation ? JSON.parse(congregation) : []
+    this.member.congregationId = id ? id[0].id : []
     this.modal.open(this.addMember, { size: 'lg' });
   }
   saveMember() {
     if (this.member.id == null || this.member.id == '') {
       delete (this.member.id)
-      this.contactService.addMember(this.member)
+      this.kartService.addMember(this.member)
     } else {
-      this.contactService.editMember(this.member)
+      this.kartService.editMember(this.member)
     }
     this.getMembers();
   }
-  getHours(email: string, index: number) {
-    let date: Date = new Date()
-    let totalCollectionName: string = `totals-${(date.getMonth() - 1).toString()}-${date.getFullYear().toString()}`
-    this.registryService.getTotals(totalCollectionName, email).then((res: any) => {
-      let currentIndex = this.members.findIndex(member => member.idRegistry == email)
-      this.members[currentIndex].totals = res
-    })
-  }
-
 
   exportPdf() {
     import("jspdf").then(jsPDF => {
@@ -145,8 +126,23 @@ export class ContactsComponent implements OnInit {
     this.modal.open(this.modalDelete, { size: 'lg' });
   }
   deleteFromDb() {
-    this.contactService.deleteMember(this.member);
+    this.kartService.deleteMember(this.member);
     this.getMembers();
   }
 
+  uploadFile(event: any) {
+    this.spinner = true;
+    const file = event.target.files[0];
+    let reader = new FileReader()
+    let nome = this.member.name
+    reader.readAsDataURL(file)
+    reader.onloadend = () => {
+      this.fileService.uploadFile("Carrinho", nome + Date.now(), reader.result).then(
+        (urlImagem: any) => {
+          this.member.imagem = urlImagem
+          this.spinner = false;
+        }
+      )
+    }
+  }
 }

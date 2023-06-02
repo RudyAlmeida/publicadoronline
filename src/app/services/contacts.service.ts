@@ -21,10 +21,10 @@ export class ContactsService {
       const MemberRef = doc(this.firestore, `membros/${registry.id}`);
       return deleteDoc(MemberRef);
   }
-  async getMembers(): Promise<Observable<any>> {
+  async getMembers(id: string): Promise<Observable<any>> {
     let Members: any = []
     const MembersRef = collection(this.firestore, 'membros' );
-    const getMembers = query(MembersRef)
+    const getMembers = query(MembersRef, where("congregationId", "==", id))
     const snapshot = await getDocs(getMembers)
     snapshot.forEach((element: any) => {
       Members.push({id: element.id, ...element.data()})
